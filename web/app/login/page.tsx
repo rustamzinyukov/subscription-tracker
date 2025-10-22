@@ -54,7 +54,21 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      setError(err.response?.data?.detail || 'Произошла ошибка при авторизации');
+      let errorMessage = 'Произошла ошибка при авторизации';
+      
+      if (err.response?.data?.detail) {
+        if (typeof err.response.data.detail === 'string') {
+          errorMessage = err.response.data.detail;
+        } else if (Array.isArray(err.response.data.detail)) {
+          errorMessage = err.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(err.response.data.detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

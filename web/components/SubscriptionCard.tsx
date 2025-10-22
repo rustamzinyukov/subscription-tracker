@@ -51,8 +51,23 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
       });
       onUpdate(updatedSubscription);
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating subscription:', error);
+      let errorMessage = 'Ошибка при обновлении подписки';
+      
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(error.response.data.detail);
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
     }
   };
 
@@ -63,8 +78,23 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
       setIsDeleting(true);
       await apiClient.deleteSubscription(subscription.id);
       onDelete(subscription.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting subscription:', error);
+      let errorMessage = 'Ошибка при удалении подписки';
+      
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(error.response.data.detail);
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsDeleting(false);
     }
@@ -76,8 +106,23 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
         is_active: !subscription.is_active,
       });
       onUpdate(updatedSubscription);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error toggling subscription:', error);
+      let errorMessage = 'Ошибка при изменении статуса подписки';
+      
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(error.response.data.detail);
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
     }
   };
 

@@ -58,9 +58,23 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
         logo_url: '',
         website_url: '',
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating subscription:', error);
-      alert('Ошибка при создании подписки');
+      let errorMessage = 'Ошибка при создании подписки';
+      
+      if (error.response?.data?.detail) {
+        if (typeof error.response.data.detail === 'string') {
+          errorMessage = error.response.data.detail;
+        } else if (Array.isArray(error.response.data.detail)) {
+          errorMessage = error.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(error.response.data.detail);
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }

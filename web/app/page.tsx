@@ -38,9 +38,23 @@ export default function HomePage() {
       
       setUser(userData);
       setSubscriptions(subscriptionsData);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading data:', err);
-      setError('Ошибка загрузки данных');
+      let errorMessage = 'Ошибка загрузки данных';
+      
+      if (err.response?.data?.detail) {
+        if (typeof err.response.data.detail === 'string') {
+          errorMessage = err.response.data.detail;
+        } else if (Array.isArray(err.response.data.detail)) {
+          errorMessage = err.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(err.response.data.detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
       localStorage.removeItem('access_token');
       router.push('/login');
     } finally {
