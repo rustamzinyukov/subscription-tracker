@@ -35,10 +35,10 @@ def get_db():
 
 def create_tables():
     """Create all tables"""
-    from backendappmodels import Base
+    from ..models.database import Base
     Base.metadata.create_all(bind=engine)
 
 def drop_tables():
     """Drop all tables"""
-    from backendappmodels import Base
+    from ..models.database import Base
     Base.metadata.drop_all(bind=engine)
