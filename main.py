@@ -24,7 +24,7 @@ if __name__ == "__main__":
     
     # Start server
     uvicorn.run(
-        "app.main:app",
+        "backend.app.main:app",
         host=host,
         port=port,
         reload=debug,
