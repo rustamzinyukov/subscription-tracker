@@ -25,21 +25,16 @@ def register_user(user_data: RegisterRequest, db: Session = Depends(get_db)):
             detail="Email already registered"
         )
     
-    if user_data.telegram_id and db.query(User).filter(User.telegram_id == user_data.telegram_id).first():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Telegram ID already registered"
-        )
+    # Telegram ID check is not needed for regular registration
     
     # Create new user
     db_user = User(
         email=user_data.email,
-        telegram_id=user_data.telegram_id,
         username=user_data.username,
         first_name=user_data.first_name,
         last_name=user_data.last_name,
-        timezone=user_data.timezone,
-        language=user_data.language
+        timezone="Europe/Moscow",  # Default timezone
+        language="ru"  # Default language
     )
     
     # Hash password if provided
