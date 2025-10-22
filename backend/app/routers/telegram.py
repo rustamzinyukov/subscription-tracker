@@ -12,8 +12,33 @@ from ..core.database import get_db
 from ..core.auth import get_telegram_user, auth_manager
 from ..models.database import User, Subscription, Notification, NotificationChannelEnum
 from ..schemas.schemas import TelegramWebhook, MessageResponse, Token
+import aiohttp
 
 router = APIRouter()
+
+async def send_telegram_message(chat_id: int, text: str):
+    """Send message via Telegram Bot API"""
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not bot_token:
+        print(f"TELEGRAM_BOT_TOKEN not found, would send: {text}")
+        return
+    
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML"
+    }
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=data) as response:
+                if response.status == 200:
+                    print(f"Message sent successfully to {chat_id}")
+                else:
+                    print(f"Failed to send message: {await response.text()}")
+    except Exception as e:
+        print(f"Error sending message: {e}")
 
 # Telegram Bot Commands
 BOT_COMMANDS = {
@@ -171,8 +196,8 @@ async def send_welcome_message(user: User):
 Начните с команды /add чтобы добавить вашу первую подписку!
     """
     
-    # In real implementation, this would send message via Telegram API
-    print(f"Sending welcome message to user {user.telegram_id}: {message}")
+    # Send message via Telegram API
+    await send_telegram_message(user.telegram_id, message)
 
 async def send_help_message(user: User):
     """Send help message"""
@@ -188,7 +213,7 @@ async def send_help_message(user: User):
 💡 Совет: Используйте /add для добавления подписок типа Netflix, Spotify, Яндекс Плюс и других.
     """
     
-    print(f"Sending help message to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
 
 async def send_subscriptions_list(user: User, db: Session):
     """Send user's subscriptions list"""
@@ -216,7 +241,7 @@ async def send_subscriptions_list(user: User, db: Session):
         
         message += f"💸 Итого в месяц: {total_monthly:.2f} RUB"
     
-    print(f"Sending subscriptions list to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
 
 async def start_add_subscription(user: User):
     """Start adding subscription process"""
@@ -267,7 +292,7 @@ async def send_statistics(user: User, db: Session):
 📋 Активных подписок: {len(subscriptions)}
     """
     
-    print(f"Sending statistics to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
 
 async def send_settings(user: User):
     """Send settings information"""
@@ -284,7 +309,7 @@ async def send_settings(user: User):
 📱 Канал: Telegram
     """
     
-    print(f"Sending settings to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
 
 async def send_unknown_command(user: User):
     """Send unknown command message"""
@@ -295,7 +320,7 @@ async def send_unknown_command(user: User):
 Используйте /help чтобы увидеть список доступных команд.
     """
     
-    print(f"Sending unknown command message to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
 
 async def handle_text_message(text: str, user: User, db: Session):
     """Handle text messages (for adding subscriptions)"""
@@ -403,6 +428,6 @@ async def send_notification(
         )
     
     # In real implementation, send message via Telegram Bot API
-    print(f"Sending notification to user {user.telegram_id}: {message}")
+    await send_telegram_message(user.telegram_id, message)
     
     return {"message": "Notification sent successfully"}
