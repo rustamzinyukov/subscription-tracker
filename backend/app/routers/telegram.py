@@ -35,6 +35,11 @@ def verify_telegram_webhook(request_body: bytes, secret_token: str, telegram_tok
     
     return hmac.compare_digest(secret_hash, telegram_token)
 
+@router.get("/webhook")
+async def telegram_webhook_get():
+    """Handle Telegram webhook GET requests (for verification)"""
+    return {"status": "ok", "message": "Telegram webhook is working"}
+
 @router.post("/webhook")
 async def telegram_webhook(
     request: Request,
