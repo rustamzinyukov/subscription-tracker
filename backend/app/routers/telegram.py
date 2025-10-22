@@ -8,10 +8,10 @@ import hashlib
 import json
 from datetime import datetime, timedelta
 
-from backenddatabase import get_db
-from backendauth import get_telegram_user, auth_manager
-from backendappmodels import User, Subscription, Notification, NotificationChannelEnum
-from backendschemas import TelegramWebhook, MessageResponse, Token
+from ..core.database import get_db
+from ..core.auth import get_telegram_user, auth_manager
+from ..models.database import User, Subscription, Notification, NotificationChannelEnum
+from ..schemas.schemas import TelegramWebhook, MessageResponse, Token
 
 router = APIRouter()
 

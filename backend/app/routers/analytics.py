@@ -6,10 +6,10 @@ from typing import List, Optional
 from datetime import date, datetime, timedelta
 from collections import defaultdict
 
-from backenddatabase import get_db
-from backendauth import get_current_user, require_premium
-from backendappmodels import User, Subscription, Analytics
-from backendschemas import AnalyticsResponse, MessageResponse
+from ..core.database import get_db
+from ..core.auth import get_current_user, require_premium
+from ..models.database import User, Subscription, Analytics
+from ..schemas.schemas import AnalyticsResponse, MessageResponse
 
 router = APIRouter()
 
