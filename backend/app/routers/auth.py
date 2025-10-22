@@ -14,7 +14,7 @@ from ..schemas.schemas import (
 
 router = APIRouter()
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=dict)
 def register_user(user_data: RegisterRequest, db: Session = Depends(get_db)):
     """Register a new user"""
     
@@ -45,7 +45,26 @@ def register_user(user_data: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     
-    return db_user
+    # Create access token
+    access_token = auth_manager.create_access_token(
+        data={"sub": str(db_user.id)}
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": db_user.id,
+            "email": db_user.email,
+            "username": db_user.username,
+            "first_name": db_user.first_name,
+            "last_name": db_user.last_name,
+            "is_premium": db_user.is_premium,
+            "is_active": db_user.is_active,
+            "created_at": db_user.created_at,
+            "last_login": db_user.last_login
+        }
+    }
 
 @router.post("/login", response_model=Token)
 def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
