@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire backend directory
-COPY backend/ .
+# Copy the entire project
+COPY . .
 
 # Expose port
 EXPOSE 8000
