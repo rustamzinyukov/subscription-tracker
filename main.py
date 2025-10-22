@@ -17,14 +17,14 @@ if __name__ == "__main__":
     debug = os.getenv("DEBUG", "false").lower() == "true"
     
     print(f"🚀 Starting Subscription Tracker API server...")
-    print(f"📍 Host: {host}")
+    print(f"🌐 Host: {host}")
     print(f"🔌 Port: {port}")
     print(f"🐛 Debug: {debug}")
     print(f"📚 Docs: http://{host}:{port}/docs")
     
     # Start server
     uvicorn.run(
-        "backend.app.main:app",
+        "app.main:app",
         host=host,
         port=port,
         reload=debug,
