@@ -7,9 +7,9 @@ import os
 from dotenv import load_dotenv
 
 # Import our modules
-from app.core.database import get_db, create_tables
-from app.core.auth import auth_manager, get_current_user
-from app.models.database import User
+from .core.database import get_db, create_tables
+from .core.auth import auth_manager, get_current_user
+from .models.database import User
 
 load_dotenv()
 
@@ -56,7 +56,7 @@ def root():
     }
 
 # Import and include routers
-from app.routers import auth, subscriptions, analytics, telegram
+from .routers import auth, subscriptions, analytics, telegram
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(subscriptions.router, prefix="/api/v1/subscriptions", tags=["Subscriptions"])

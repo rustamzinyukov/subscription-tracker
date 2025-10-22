@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import Optional
 
-from app.core.database import get_db
-from app.core.auth import auth_manager, get_current_user, get_telegram_user
-from app.models.database import User
-from app.schemas.schemas import (
+from ..core.database import get_db
+from ..core.auth import auth_manager, get_current_user, get_telegram_user
+from ..models.database import User
+from ..schemas.schemas import (
     UserCreate, UserResponse, UserUpdate, Token, LoginRequest, 
     TelegramAuth, MessageResponse
 )

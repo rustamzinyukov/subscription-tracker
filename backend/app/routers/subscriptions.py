@@ -5,10 +5,10 @@ from sqlalchemy import and_, or_
 from typing import List, Optional
 from datetime import date, datetime, timedelta
 
-from backenddatabase import get_db
-from backendauth import get_current_user, require_premium
-from backendappmodels import User, Subscription, FrequencyEnum
-from backendschemas import (
+from ..core.database import get_db
+from ..core.auth import get_current_user, require_premium
+from ..models.database import User, Subscription, FrequencyEnum
+from ..schemas.schemas import (
     SubscriptionCreate, SubscriptionUpdate, SubscriptionResponse,
     PaginationParams, PaginatedResponse, MessageResponse
 )
