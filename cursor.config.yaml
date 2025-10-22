@@ -1,0 +1,92 @@
+# cursor.config.yaml — требования и конфигурация проекта
+# Многоплатформенный сервис учета подписок: Web + Flutter + Telegram Bot
+
+project:
+  name: "SubscriptionTracker"
+  description: "Сервис для учета, анализа и управления цифровыми подписками на всех платформах"
+  version: "1.0.0"
+
+stack:
+  backend:
+    language: "Python"
+    framework: "FastAPI"
+    database: "PostgreSQL"
+    orm: "SQLAlchemy"
+    auth: "JWT + Firebase Auth (опционально)"
+    hosting: "Render / Railway / AWS ECS"
+  frontend_web:
+    framework: "Next.js (React)"
+    styling: "Styled Components / Tailwind CSS"
+    hosting: "Vercel"
+  mobile:
+    framework: "Flutter"
+    platforms: ["iOS", "Android", "Web"]
+    state_management: "Riverpod"
+    offline_support: true
+  telegram_bot:
+    language: "Python"
+    library: "aiogram"
+    deployment: "Webhook через HTTPS"
+    integration: "Telegram Mini App (Web на Flutter)"
+
+features:
+  mvp:
+    - "Ручное добавление/редактирование/удаление подписок"
+    - "Напоминания через Telegram (за 1 и 3 дня до списания)"
+    - "Базовая аналитика: сумма трат в месяц/год"
+    - "Мультивалютность (USD, EUR, RUB)"
+    - "Кроссплатформенная синхронизация через единый API"
+    - "Аутентификация пользователей"
+  premium:
+    - "Неограниченное количество подписок"
+    - "Настройка произвольных дат напоминаний"
+    - "Категоризация подписок"
+    - "Экспорт данных в CSV"
+    - "Интеграция с календарем"
+    - "Семейные аккаунты"
+
+security:
+  - "Хранение секретов в переменных окружения или HashiCorp Vault"
+  - "HTTPS + TLS 1.2+ для всех коммуникаций"
+  - "Валидация и санитизация входных данных"
+  - "Rate limiting для защиты от спама/DDoS"
+  - "X-Telegram-Bot-Api-Secret-Token для аутентификации вебхуков"
+  - "Шифрование чувствительных данных (AES-256 при необходимости)"
+
+api:
+  endpoints:
+    - "POST /users/register"
+    - "POST /users/login"
+    - "GET /subscriptions"
+    - "POST /subscriptions"
+    - "PUT /subscriptions/{id}"
+    - "DELETE /subscriptions/{id}"
+    - "GET /analytics/monthly"
+    - "GET /analytics/yearly"
+    - "POST /telegram-webhook"
+
+monetization:
+  model: "Freemium"
+  free_tier:
+    max_subscriptions: 10
+    features: ["basic_reminders", "manual_input", "basic_analytics"]
+  premium_tier:
+    price_monthly: "4.99 USD"
+    price_yearly: "49.99 USD (~549 RUB)"
+    features: ["unlimited_subs", "custom_reminders", "categories", "export", "family"]
+
+localization:
+  primary_market: "Russia"
+  supported_languages: ["ru", "en"]
+  default_currency: "RUB"
+
+
+constraints:
+  - Не использовать автоматическую привязку к банкам в MVP (ручной ввод как USP)
+  - Поддержка offline-режима в мобильном приложении
+  - Единая дизайн-система для всех платформ
+  - Все клиенты (Web, Flutter, Bot) используют один и тот же API
+
+references:
+  - "Комплексный Анализ Разработки Многоплатформенного Сервиса для Управления Подписками.pdf"
+  - "analysis1.txt"

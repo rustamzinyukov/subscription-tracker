@@ -1,0 +1,232 @@
+# backend/app/schemas.py
+from pydantic import BaseModel, EmailStr, validator
+from typing import Optional, List
+from datetime import date, datetime
+from enum import Enum
+
+# Enums
+class FrequencyEnum(str, Enum):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    YEARLY = "yearly"
+
+class NotificationChannelEnum(str, Enum):
+    TELEGRAM = "telegram"
+    EMAIL = "email"
+    PUSH = "push"
+
+# User Schemas
+class UserBase(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    timezone: str = "Europe/Moscow"
+    language: str = "ru"
+
+class UserCreate(UserBase):
+    password: Optional[str] = None
+    telegram_id: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    timezone: Optional[str] = None
+    language: Optional[str] = None
+
+class UserResponse(UserBase):
+    id: int
+    is_premium: bool
+    is_active: bool
+    created_at: datetime
+    last_login: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# Subscription Schemas
+class SubscriptionBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    amount: float
+    currency: str = "RUB"
+    next_billing_date: date
+    frequency: FrequencyEnum
+    category: Optional[str] = None
+    provider: Optional[str] = None
+    logo_url: Optional[str] = None
+    website_url: Optional[str] = None
+
+    @validator('amount')
+    def validate_amount(cls, v):
+        if v <= 0:
+            raise ValueError('Amount must be positive')
+        return v
+
+    @validator('currency')
+    def validate_currency(cls, v):
+        allowed_currencies = ['RUB', 'USD', 'EUR', 'GBP', 'CNY']
+        if v not in allowed_currencies:
+            raise ValueError(f'Currency must be one of: {allowed_currencies}')
+        return v
+
+class SubscriptionCreate(SubscriptionBase):
+    pass
+
+class SubscriptionUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    amount: Optional[float] = None
+    currency: Optional[str] = None
+    next_billing_date: Optional[date] = None
+    frequency: Optional[FrequencyEnum] = None
+    is_active: Optional[bool] = None
+    category: Optional[str] = None
+    provider: Optional[str] = None
+    logo_url: Optional[str] = None
+    website_url: Optional[str] = None
+
+    @validator('amount')
+    def validate_amount(cls, v):
+        if v is not None and v <= 0:
+            raise ValueError('Amount must be positive')
+        return v
+
+class SubscriptionResponse(SubscriptionBase):
+    id: int
+    user_id: int
+    is_active: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    cancelled_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# Notification Schemas
+class NotificationBase(BaseModel):
+    scheduled_at: datetime
+    channel: NotificationChannelEnum
+    message: Optional[str] = None
+    reminder_days: Optional[int] = None
+
+class NotificationCreate(NotificationBase):
+    subscription_id: Optional[int] = None
+
+class NotificationResponse(NotificationBase):
+    id: int
+    user_id: int
+    subscription_id: Optional[int] = None
+    sent: bool
+    sent_at: Optional[datetime] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Analytics Schemas
+class AnalyticsResponse(BaseModel):
+    period_start: date
+    period_end: date
+    total_spent: float
+    currency: str
+    subscription_count: int
+    category_breakdown: Optional[dict] = None
+
+    class Config:
+        from_attributes = True
+
+# Authentication Schemas
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+class TokenData(BaseModel):
+    user_id: Optional[int] = None
+    telegram_id: Optional[str] = None
+
+class LoginRequest(BaseModel):
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    telegram_id: Optional[str] = None
+
+class TelegramAuth(BaseModel):
+    telegram_id: str
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+# API Response Schemas
+class MessageResponse(BaseModel):
+    message: str
+    success: bool = True
+
+class ErrorResponse(BaseModel):
+    error: str
+    detail: Optional[str] = None
+    success: bool = False
+
+# Pagination Schemas
+class PaginationParams(BaseModel):
+    page: int = 1
+    size: int = 20
+    
+    @validator('page')
+    def validate_page(cls, v):
+        if v < 1:
+            raise ValueError('Page must be >= 1')
+        return v
+    
+    @validator('size')
+    def validate_size(cls, v):
+        if v < 1 or v > 100:
+            raise ValueError('Size must be between 1 and 100')
+        return v
+
+class PaginatedResponse(BaseModel):
+    items: List[dict]
+    total: int
+    page: int
+    size: int
+    pages: int
+
+# Telegram Bot Schemas
+class TelegramWebhook(BaseModel):
+    update_id: int
+    message: Optional[dict] = None
+    callback_query: Optional[dict] = None
+
+class TelegramCommand(BaseModel):
+    command: str
+    args: Optional[str] = None
+
+# Subscription Templates
+class SubscriptionTemplate(BaseModel):
+    name: str
+    provider: str
+    category: str
+    logo_url: str
+    website_url: str
+    common_amounts: List[float]
+    common_frequencies: List[FrequencyEnum]
+
+# Settings Schemas
+class UserSettings(BaseModel):
+    timezone: str = "Europe/Moscow"
+    language: str = "ru"
+    notification_enabled: bool = True
+    reminder_days: List[int] = [1, 3, 7]
+    default_currency: str = "RUB"
+    theme: str = "light"
+
+class SettingsUpdate(BaseModel):
+    timezone: Optional[str] = None
+    language: Optional[str] = None
+    notification_enabled: Optional[bool] = None
+    reminder_days: Optional[List[int]] = None
+    default_currency: Optional[str] = None
+    theme: Optional[str] = None
