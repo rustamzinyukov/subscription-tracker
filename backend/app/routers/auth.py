@@ -8,14 +8,14 @@ from ..core.database import get_db
 from ..core.auth import auth_manager, get_current_user, get_telegram_user
 from ..models.database import User
 from ..schemas.schemas import (
-    UserCreate, UserResponse, UserUpdate, Token, LoginRequest, 
+    UserCreate, UserResponse, UserUpdate, Token, LoginRequest, RegisterRequest,
     TelegramAuth, MessageResponse
 )
 
 router = APIRouter()
 
 @router.post("/register", response_model=UserResponse)
-def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
+def register_user(user_data: RegisterRequest, db: Session = Depends(get_db)):
     """Register a new user"""
     
     # Check if user already exists

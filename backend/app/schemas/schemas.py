@@ -47,6 +47,41 @@ class UserResponse(UserBase):
     class Config:
         from_attributes = True
 
+# Auth Schemas
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+    @validator('password')
+    def validate_password_length(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password too long (max 72 bytes)')
+        if len(v) < 6:
+            raise ValueError('Password too short (min 6 characters)')
+        return v
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+    @validator('password')
+    def validate_password_length(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError('Password too long (max 72 bytes)')
+        if len(v) < 6:
+            raise ValueError('Password too short (min 6 characters)')
+        return v
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
 # Subscription Schemas
 class SubscriptionBase(BaseModel):
     name: str

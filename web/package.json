@@ -1,4 +1,3 @@
-// web/package.json
 {
   "name": "subscription-tracker-web",
   "version": "1.0.0",
@@ -25,7 +24,7 @@
     "@types/node": "22.7.5",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
-    "eslint": "9.13.0",
+    "eslint": "^8.57.0",
     "eslint-config-next": "14.2.15",
     "typescript": "5.6.3"
   }
