@@ -1,16 +1,12 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+builder = "nixpacks"
 
 [deploy]
-startCommand = "python main.py"
-healthcheckPath = "/health"
+startCommand = "cd web && npm run start"
+healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-[environments.production]
-variables = { ENVIRONMENT = "production" }
-
-[environments.staging]
-variables = { ENVIRONMENT = "staging" }
+[deploy.services.web-frontend]
+startCommand = "cd web && npm run start"
