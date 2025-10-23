@@ -29,6 +29,11 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     const logMessage = `🚀 handleSubmit вызван! ${new Date().toISOString()} - isLogin: ${isLogin}, formData: ${JSON.stringify(formData)}`;
     console.log(logMessage);
+    
+    // Получаем существующие логи или создаем новый массив
+    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+    existingLogs.push(logMessage);
+    localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
     localStorage.setItem('debug_log', logMessage);
     
     e.preventDefault();
@@ -39,6 +44,9 @@ export default function LoginPage() {
       if (isLogin) {
         const loginLog = `🔐 Начинаем логин с данными: ${new Date().toISOString()} - email: ${formData.email}`;
         console.log(loginLog);
+        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+        existingLogs.push(loginLog);
+        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
         localStorage.setItem('debug_log', loginLog);
         
         const loginData: LoginRequest = {
@@ -48,22 +56,34 @@ export default function LoginPage() {
         
         const requestLog = `📤 Отправляем запрос на логин: ${new Date().toISOString()}`;
         console.log(requestLog);
+        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+        existingLogs.push(requestLog);
+        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
         localStorage.setItem('debug_log', requestLog);
         
         const response = await apiClient.login(loginData);
         
         const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
         console.log(successLog);
+        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+        existingLogs.push(successLog);
+        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
         localStorage.setItem('debug_log', successLog);
         
         localStorage.setItem('access_token', response.access_token);
         
         const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
         console.log(tokenLog);
+        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+        existingLogs.push(tokenLog);
+        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
         localStorage.setItem('debug_log', tokenLog);
         
         const redirectLog = `🔄 Перенаправляем на главную страницу: ${new Date().toISOString()}`;
         console.log(redirectLog);
+        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+        existingLogs.push(redirectLog);
+        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
         localStorage.setItem('debug_log', redirectLog);
         
         router.push('/');
@@ -282,16 +302,17 @@ export default function LoginPage() {
             <div className="mt-6 space-y-3">
               <button
                 onClick={() => {
-                  const log = localStorage.getItem('debug_log');
-                  if (log) {
-                    alert(`Последний лог:\n${log}`);
+                  const logs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+                  if (logs.length > 0) {
+                    const allLogs = logs.join('\n\n');
+                    alert(`Все логи (${logs.length}):\n\n${allLogs}`);
                   } else {
                     alert('Логов пока нет');
                   }
                 }}
                 className="w-full flex justify-center items-center px-4 py-2 border border-blue-300 rounded-lg shadow-sm bg-blue-50 text-sm font-medium text-blue-600 hover:bg-blue-100"
               >
-                📋 Показать последний лог
+                📋 Показать все логи
               </button>
               
               <button
