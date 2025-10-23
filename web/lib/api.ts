@@ -30,5 +30,27 @@ api.interceptors.response.use(
   }
 );
 
+// API methods
+export const getCurrentUser = () => api.get('/auth/me');
+export const getSubscriptions = () => api.get('/subscriptions');
+export const getMonthlyAnalytics = () => api.get('/analytics/monthly');
+export const getYearlyAnalytics = () => api.get('/analytics/yearly');
+export const createSubscription = (data: any) => api.post('/subscriptions', data);
+export const updateSubscription = (id: number, data: any) => api.put(`/subscriptions/${id}`, data);
+export const deleteSubscription = (id: number) => api.delete(`/subscriptions/${id}`);
+export const login = (data: any) => api.post('/auth/login', data);
+export const register = (data: any) => api.post('/auth/register', data);
+
+// Add methods to apiClient
+api.getCurrentUser = getCurrentUser;
+api.getSubscriptions = getSubscriptions;
+api.getMonthlyAnalytics = getMonthlyAnalytics;
+api.getYearlyAnalytics = getYearlyAnalytics;
+api.createSubscription = createSubscription;
+api.updateSubscription = updateSubscription;
+api.deleteSubscription = deleteSubscription;
+api.login = login;
+api.register = register;
+
 export const apiClient = api;
 export default api;
