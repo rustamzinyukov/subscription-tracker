@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
@@ -18,7 +18,8 @@
     "autoprefixer": "^10.4.20",
     "lucide-react": "^0.263.1",
     "clsx": "^2.0.0",
-    "class-variance-authority": "^0.7.0"
+    "class-variance-authority": "^0.7.0",
+    "tailwindcss-merge": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "22.7.5",
@@ -27,5 +28,9 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.15",
     "typescript": "5.6.3"
+  },
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
   }
 }
