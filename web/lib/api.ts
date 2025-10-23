@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'https://disciplined-cat-production.up.railway.app';
+// Force HTTPS for all API requests
+const BACKEND_API_URL = 'https://disciplined-cat-production.up.railway.app';
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: BACKEND_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
