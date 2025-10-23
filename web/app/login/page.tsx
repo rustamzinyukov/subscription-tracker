@@ -74,10 +74,18 @@ export default function LoginPage() {
         addLog(`🔍 access_token в response: ${response.data?.access_token ? 'найден' : 'не найден'}`);
         addLog(`🔍 access_token значение: ${response.data?.access_token || 'undefined'}`);
         
-        localStorage.setItem('access_token', response.access_token);
+        addLog(`🔍 Сохраняем токен: ${response.data?.access_token || 'undefined'}`);
+        localStorage.setItem('access_token', response.data?.access_token || '');
         
         const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
         addLog(tokenLog);
+        
+        // Проверяем, что сохранилось
+        const savedToken = localStorage.getItem('access_token');
+        addLog(`🔍 Проверяем сохраненный токен: ${savedToken ? 'найден' : 'не найден'}`);
+        if (savedToken) {
+          addLog(`🔍 Сохраненный токен (первые 20 символов): ${savedToken.substring(0, 20)}...`);
+        }
         
         const redirectLog = `🔄 Перенаправляем на главную страницу: ${new Date().toISOString()}`;
         addLog(redirectLog);

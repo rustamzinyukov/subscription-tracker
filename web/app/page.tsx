@@ -34,6 +34,8 @@ export default function HomePage() {
     
     const token = localStorage.getItem('access_token');
     addLog(`🔑 Токен в localStorage: ${token ? 'найден' : 'не найден'}`);
+    addLog(`🔑 Тип токена: ${typeof token}`);
+    addLog(`🔑 Значение токена: ${token}`);
     if (token) {
       addLog(`🔑 Токен (первые 20 символов): ${token.substring(0, 20)}...`);
     }
