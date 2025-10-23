@@ -59,10 +59,14 @@ export default function HomePage() {
       addLog('📤 Загружаем данные пользователя...');
       addLog(`🔑 Токен перед запросом: ${localStorage.getItem('access_token')?.substring(0, 20)}...`);
       setLoading(true);
-      const [userData, subscriptionsData] = await Promise.all([
-        apiClient.getCurrentUser(),
-        apiClient.getSubscriptions(),
-      ]);
+      
+      addLog('🚀 Вызываем apiClient.getCurrentUser()...');
+      const userData = await apiClient.getCurrentUser();
+      addLog('✅ getCurrentUser() успешен');
+      
+      addLog('🚀 Вызываем apiClient.getSubscriptions()...');
+      const subscriptionsData = await apiClient.getSubscriptions();
+      addLog('✅ getSubscriptions() успешен');
       
       addLog('✅ Данные пользователя загружены успешно');
       setUser(userData);
