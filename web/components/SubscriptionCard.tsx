@@ -29,7 +29,8 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
     if (!subscription.is_active) return 'bg-gray-100 text-gray-600';
     switch (billingStatus) {
       case 'overdue': return 'bg-red-100 text-red-600';
-      case 'today': return 'bg-yellow-100 text-yellow-600';
+      case 'due': return 'bg-yellow-100 text-yellow-600';
+      case 'upcoming': return 'bg-green-100 text-green-600';
       default: return 'bg-green-100 text-green-600';
     }
   };
@@ -38,7 +39,8 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
     if (!subscription.is_active) return 'Неактивна';
     switch (billingStatus) {
       case 'overdue': return 'Просрочена';
-      case 'today': return 'Сегодня';
+      case 'due': return 'Скоро';
+      case 'upcoming': return `${daysUntilBilling} дн.`;
       default: return `${daysUntilBilling} дн.`;
     }
   };

@@ -54,16 +54,17 @@ export const deleteSubscription = (id: number) => api.delete(`/subscriptions/${i
 export const login = (data: any) => api.post('/auth/login', data);
 export const register = (data: any) => api.post('/auth/register', data);
 
-// Add methods to apiClient
-api.getCurrentUser = getCurrentUser;
-api.getSubscriptions = getSubscriptions;
-api.getMonthlyAnalytics = getMonthlyAnalytics;
-api.getYearlyAnalytics = getYearlyAnalytics;
-api.createSubscription = createSubscription;
-api.updateSubscription = updateSubscription;
-api.deleteSubscription = deleteSubscription;
-api.login = login;
-api.register = register;
-
-export const apiClient = api as ApiClient;
+// Create apiClient object with methods
+export const apiClient = {
+  ...api,
+  getCurrentUser,
+  getSubscriptions,
+  getMonthlyAnalytics,
+  getYearlyAnalytics,
+  createSubscription,
+  updateSubscription,
+  deleteSubscription,
+  login,
+  register,
+} as ApiClient;
 export default api;

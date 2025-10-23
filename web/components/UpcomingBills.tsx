@@ -8,7 +8,7 @@ interface UpcomingBillsProps {
 }
 
 export default function UpcomingBills({ subscriptions }: UpcomingBillsProps) {
-  const upcomingBills = getUpcomingBills(subscriptions, 30);
+  const upcomingBills = getUpcomingBills(subscriptions);
   const overdueBills = getOverdueBills(subscriptions);
 
   if (upcomingBills.length === 0 && overdueBills.length === 0) {
