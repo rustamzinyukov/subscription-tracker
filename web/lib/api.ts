@@ -26,8 +26,12 @@ interface ApiClient {
 // Add request interceptor to include auth token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
+  console.log(`🔑 API Request to ${config.url} - Token:`, token ? `${token.substring(0, 20)}...` : 'not found');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log('✅ Authorization header set');
+  } else {
+    console.log('❌ No token found, request will be unauthorized');
   }
   return config;
 });
