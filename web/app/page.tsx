@@ -17,28 +17,54 @@ export default function HomePage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  // Функция для логирования
+  const addLog = (message: string) => {
+    console.log(message);
+    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+    existingLogs.push(message);
+    localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
+    setLogs(prev => [...prev, message]);
+  };
 
   useEffect(() => {
+    addLog('🏠 Главная страница загружена');
+    
     const token = localStorage.getItem('access_token');
     if (!token) {
+      addLog('❌ Токен не найден, перенаправляем на логин');
       router.push('/login');
       return;
     }
 
+    addLog('✅ Токен найден, загружаем данные');
     loadData();
+    
+    // Загружаем существующие логи
+    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+    setLogs(existingLogs);
   }, [router]);
 
   const loadData = async () => {
     try {
+      addLog('📤 Загружаем данные пользователя...');
       setLoading(true);
       const [userData, subscriptionsData] = await Promise.all([
         apiClient.getCurrentUser(),
         apiClient.getSubscriptions(),
       ]);
       
+      addLog('✅ Данные пользователя загружены успешно');
       setUser(userData);
       setSubscriptions(subscriptionsData);
     } catch (err: any) {
+      const errorLog = `❌ Ошибка загрузки данных: ${JSON.stringify({
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      })}`;
+      addLog(errorLog);
       console.error('Error loading data:', err);
       let errorMessage = 'Ошибка загрузки данных';
       
@@ -176,6 +202,33 @@ export default function HomePage() {
           )}
         </div>
       </main>
+      
+      {/* Отображение логов */}
+      {logs.length > 0 && (
+        <div className="mt-8 max-w-6xl mx-auto px-4">
+          <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-white font-bold">📋 Логи отладки ({logs.length})</h3>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('debug_logs');
+                  setLogs([]);
+                }}
+                className="text-red-400 hover:text-red-300 text-xs"
+              >
+                Очистить логи
+              </button>
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {logs.map((log, index) => (
+                <div key={index} className="mb-1 text-xs">
+                  {log}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
