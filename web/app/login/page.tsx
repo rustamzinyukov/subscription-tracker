@@ -69,6 +69,11 @@ export default function LoginPage() {
         const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
         addLog(successLog);
         
+        // Проверяем структуру ответа
+        addLog(`🔍 Структура ответа: data=${JSON.stringify(response.data)}`);
+        addLog(`🔍 access_token в response: ${response.data?.access_token ? 'найден' : 'не найден'}`);
+        addLog(`🔍 access_token значение: ${response.data?.access_token || 'undefined'}`);
+        
         localStorage.setItem('access_token', response.access_token);
         
         const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
