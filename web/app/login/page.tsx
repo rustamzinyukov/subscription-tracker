@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -24,6 +25,10 @@ export default function LoginPage() {
     if (token) {
       router.push('/');
     }
+    
+    // Загружаем существующие логи
+    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+    setLogs(existingLogs);
   }, [router]);
 
   // Функция для логирования
@@ -33,6 +38,9 @@ export default function LoginPage() {
     existingLogs.push(message);
     localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
     localStorage.setItem('debug_log', message);
+    
+    // Обновляем состояние для отображения на странице
+    setLogs(prev => [...prev, message]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -320,6 +328,33 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      
+      {/* Отображение логов */}
+      {logs.length > 0 && (
+        <div className="mt-8 max-w-4xl mx-auto">
+          <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-white font-bold">📋 Логи отладки ({logs.length})</h3>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('debug_logs');
+                  setLogs([]);
+                }}
+                className="text-red-400 hover:text-red-300 text-xs"
+              >
+                Очистить логи
+              </button>
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {logs.map((log, index) => (
+                <div key={index} className="mb-1 text-xs">
+                  {log}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
