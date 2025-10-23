@@ -26,15 +26,18 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  // Функция для логирования
+  const addLog = (message: string) => {
+    console.log(message);
+    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
+    existingLogs.push(message);
+    localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
+    localStorage.setItem('debug_log', message);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     const logMessage = `🚀 handleSubmit вызван! ${new Date().toISOString()} - isLogin: ${isLogin}, formData: ${JSON.stringify(formData)}`;
-    console.log(logMessage);
-    
-    // Получаем существующие логи или создаем новый массив
-    const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-    existingLogs.push(logMessage);
-    localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-    localStorage.setItem('debug_log', logMessage);
+    addLog(logMessage);
     
     e.preventDefault();
     setIsLoading(true);
@@ -43,11 +46,7 @@ export default function LoginPage() {
     try {
       if (isLogin) {
         const loginLog = `🔐 Начинаем логин с данными: ${new Date().toISOString()} - email: ${formData.email}`;
-        console.log(loginLog);
-        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-        existingLogs.push(loginLog);
-        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-        localStorage.setItem('debug_log', loginLog);
+        addLog(loginLog);
         
         const loginData: LoginRequest = {
           email: formData.email,
@@ -55,36 +54,20 @@ export default function LoginPage() {
         };
         
         const requestLog = `📤 Отправляем запрос на логин: ${new Date().toISOString()}`;
-        console.log(requestLog);
-        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-        existingLogs.push(requestLog);
-        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-        localStorage.setItem('debug_log', requestLog);
+        addLog(requestLog);
         
         const response = await apiClient.login(loginData);
         
         const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
-        console.log(successLog);
-        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-        existingLogs.push(successLog);
-        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-        localStorage.setItem('debug_log', successLog);
+        addLog(successLog);
         
         localStorage.setItem('access_token', response.access_token);
         
         const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
-        console.log(tokenLog);
-        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-        existingLogs.push(tokenLog);
-        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-        localStorage.setItem('debug_log', tokenLog);
+        addLog(tokenLog);
         
         const redirectLog = `🔄 Перенаправляем на главную страницу: ${new Date().toISOString()}`;
-        console.log(redirectLog);
-        const existingLogs = JSON.parse(localStorage.getItem('debug_logs') || '[]');
-        existingLogs.push(redirectLog);
-        localStorage.setItem('debug_logs', JSON.stringify(existingLogs));
-        localStorage.setItem('debug_log', redirectLog);
+        addLog(redirectLog);
         
         router.push('/');
       } else {
@@ -105,8 +88,7 @@ export default function LoginPage() {
         data: err.response?.data,
         message: err.message
       })}`;
-      console.error(errorLog);
-      localStorage.setItem('debug_log', errorLog);
+      addLog(errorLog);
       
       let errorMessage = 'Произошла ошибка при авторизации';
       
@@ -125,8 +107,7 @@ export default function LoginPage() {
       setError(errorMessage);
     } finally {
       const finalLog = `🏁 handleSubmit завершен: ${new Date().toISOString()} - isLoading = false`;
-      console.log(finalLog);
-      localStorage.setItem('debug_log', finalLog);
+      addLog(finalLog);
       setIsLoading(false);
     }
   };
