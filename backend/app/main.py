@@ -1,9 +1,10 @@
 # backend/app/main.py
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 import os
+import time
 from dotenv import load_dotenv
 
 # Import our modules
@@ -31,6 +32,20 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Add request logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    print(f"📥 Incoming request: {request.method} {request.url.path}")
+    print(f"🔑 Authorization header: {request.headers.get('authorization', 'Not present')}")
+    
+    response = await call_next(request)
+    
+    process_time = time.time() - start_time
+    print(f"📤 Response: {response.status_code} (took {process_time:.2f}s)")
+    
+    return response
 
 # Create database tables on startup
 @app.on_event("startup")
