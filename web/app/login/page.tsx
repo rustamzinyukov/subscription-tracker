@@ -27,18 +27,24 @@ export default function LoginPage() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('🚀 handleSubmit вызван!', { isLogin, formData });
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
       if (isLogin) {
+        console.log('🔐 Начинаем логин с данными:', { email: formData.email, password: '***' });
         const loginData: LoginRequest = {
           email: formData.email,
           password: formData.password,
         };
+        console.log('📤 Отправляем запрос на логин...');
         const response = await apiClient.login(loginData);
+        console.log('✅ Логин успешен!', response);
         localStorage.setItem('access_token', response.access_token);
+        console.log('💾 Токен сохранен в localStorage');
+        console.log('🔄 Перенаправляем на главную страницу...');
         router.push('/');
       } else {
         const registerData = {
@@ -53,7 +59,12 @@ export default function LoginPage() {
         router.push('/');
       }
     } catch (err: any) {
-      console.error('Auth error:', err);
+      console.error('❌ Ошибка при авторизации:', err);
+      console.error('📊 Детали ошибки:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
       let errorMessage = 'Произошла ошибка при авторизации';
       
       if (err.response?.data?.detail) {
@@ -70,6 +81,7 @@ export default function LoginPage() {
       
       setError(errorMessage);
     } finally {
+      console.log('🏁 handleSubmit завершен, isLoading = false');
       setIsLoading(false);
     }
   };
