@@ -38,8 +38,13 @@ api.interceptors.request.use((config) => {
 
 // Add response interceptor for error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`✅ API Response from ${response.config.url}: ${response.status}`);
+    return response;
+  },
   (error) => {
+    console.log(`❌ API Error from ${error.config?.url}: ${error.message}`);
+    console.log(`❌ Error details:`, error);
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       window.location.href = '/login';
