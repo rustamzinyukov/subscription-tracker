@@ -23,7 +23,7 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
   });
 
   const daysUntilBilling = getDaysUntilBilling(subscription.next_billing_date);
-  const billingStatus = getBillingStatus(subscription.next_billing_date);
+  const billingStatus = getBillingStatus(daysUntilBilling);
 
   const getStatusColor = () => {
     if (!subscription.is_active) return 'bg-gray-100 text-gray-600';
