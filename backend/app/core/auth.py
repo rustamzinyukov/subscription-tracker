@@ -102,13 +102,26 @@ def get_current_user(
     db: Session = Depends(get_db)
 ):
     """Get current authenticated user"""
-    from backendappmodels import User
+    from ..models.database import User
+    
+    print(f"🔐 get_current_user called with token: {credentials.credentials[:20]}...")
     
     token = credentials.credentials
-    payload = auth_manager.verify_token(token)
+    try:
+        payload = auth_manager.verify_token(token)
+        print(f"✅ Token verified, payload: {payload}")
+    except Exception as e:
+        print(f"❌ Token verification failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+    
     user_id = payload.get("sub")
+    print(f"👤 Looking for user with ID: {user_id}")
     
     if user_id is None:
+        print("❌ No user ID in token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"
@@ -116,11 +129,13 @@ def get_current_user(
     
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
+        print(f"❌ User not found with ID: {user_id}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User not found"
         )
     
+    print(f"✅ User found: {user.email}")
     return user
 
 def get_current_user_optional(
