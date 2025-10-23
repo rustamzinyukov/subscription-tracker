@@ -77,7 +77,9 @@ export default function LoginPage() {
         const redirectLog = `🔄 Перенаправляем на главную страницу: ${new Date().toISOString()}`;
         addLog(redirectLog);
         
+        addLog('🚀 Вызываем router.push("/")...');
         router.push('/');
+        addLog('✅ router.push("/") вызван');
       } else {
         const registerData = {
           email: formData.email,

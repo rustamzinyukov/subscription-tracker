@@ -30,8 +30,11 @@ export default function HomePage() {
 
   useEffect(() => {
     addLog('🏠 Главная страница загружена');
+    addLog(`📍 Текущий URL: ${window.location.href}`);
     
     const token = localStorage.getItem('access_token');
+    addLog(`🔑 Токен в localStorage: ${token ? 'найден' : 'не найден'}`);
+    
     if (!token) {
       addLog('❌ Токен не найден, перенаправляем на логин');
       router.push('/login');
