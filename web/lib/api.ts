@@ -9,6 +9,19 @@ export const api = axios.create({
   },
 });
 
+// Define API client interface
+interface ApiClient extends typeof api {
+  getCurrentUser: () => Promise<any>;
+  getSubscriptions: () => Promise<any>;
+  getMonthlyAnalytics: () => Promise<any>;
+  getYearlyAnalytics: () => Promise<any>;
+  createSubscription: (data: any) => Promise<any>;
+  updateSubscription: (id: number, data: any) => Promise<any>;
+  deleteSubscription: (id: number) => Promise<any>;
+  login: (data: any) => Promise<any>;
+  register: (data: any) => Promise<any>;
+}
+
 // Add request interceptor to include auth token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -52,5 +65,5 @@ api.deleteSubscription = deleteSubscription;
 api.login = login;
 api.register = register;
 
-export const apiClient = api;
+export const apiClient = api as ApiClient;
 export default api;
