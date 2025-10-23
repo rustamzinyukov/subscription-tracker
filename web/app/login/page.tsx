@@ -27,24 +27,45 @@ export default function LoginPage() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('🚀 handleSubmit вызван!', { isLogin, formData });
+    const logMessage = `🚀 handleSubmit вызван! ${new Date().toISOString()} - isLogin: ${isLogin}, formData: ${JSON.stringify(formData)}`;
+    console.log(logMessage);
+    localStorage.setItem('debug_log', logMessage);
+    
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
       if (isLogin) {
-        console.log('🔐 Начинаем логин с данными:', { email: formData.email, password: '***' });
+        const loginLog = `🔐 Начинаем логин с данными: ${new Date().toISOString()} - email: ${formData.email}`;
+        console.log(loginLog);
+        localStorage.setItem('debug_log', loginLog);
+        
         const loginData: LoginRequest = {
           email: formData.email,
           password: formData.password,
         };
-        console.log('📤 Отправляем запрос на логин...');
+        
+        const requestLog = `📤 Отправляем запрос на логин: ${new Date().toISOString()}`;
+        console.log(requestLog);
+        localStorage.setItem('debug_log', requestLog);
+        
         const response = await apiClient.login(loginData);
-        console.log('✅ Логин успешен!', response);
+        
+        const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
+        console.log(successLog);
+        localStorage.setItem('debug_log', successLog);
+        
         localStorage.setItem('access_token', response.access_token);
-        console.log('💾 Токен сохранен в localStorage');
-        console.log('🔄 Перенаправляем на главную страницу...');
+        
+        const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
+        console.log(tokenLog);
+        localStorage.setItem('debug_log', tokenLog);
+        
+        const redirectLog = `🔄 Перенаправляем на главную страницу: ${new Date().toISOString()}`;
+        console.log(redirectLog);
+        localStorage.setItem('debug_log', redirectLog);
+        
         router.push('/');
       } else {
         const registerData = {
@@ -59,12 +80,14 @@ export default function LoginPage() {
         router.push('/');
       }
     } catch (err: any) {
-      console.error('❌ Ошибка при авторизации:', err);
-      console.error('📊 Детали ошибки:', {
+      const errorLog = `❌ Ошибка при авторизации: ${new Date().toISOString()} - ${JSON.stringify({
         status: err.response?.status,
         data: err.response?.data,
         message: err.message
-      });
+      })}`;
+      console.error(errorLog);
+      localStorage.setItem('debug_log', errorLog);
+      
       let errorMessage = 'Произошла ошибка при авторизации';
       
       if (err.response?.data?.detail) {
@@ -81,7 +104,9 @@ export default function LoginPage() {
       
       setError(errorMessage);
     } finally {
-      console.log('🏁 handleSubmit завершен, isLoading = false');
+      const finalLog = `🏁 handleSubmit завершен: ${new Date().toISOString()} - isLoading = false`;
+      console.log(finalLog);
+      localStorage.setItem('debug_log', finalLog);
       setIsLoading(false);
     }
   };
@@ -254,7 +279,21 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-3">
+              <button
+                onClick={() => {
+                  const log = localStorage.getItem('debug_log');
+                  if (log) {
+                    alert(`Последний лог:\n${log}`);
+                  } else {
+                    alert('Логов пока нет');
+                  }
+                }}
+                className="w-full flex justify-center items-center px-4 py-2 border border-blue-300 rounded-lg shadow-sm bg-blue-50 text-sm font-medium text-blue-600 hover:bg-blue-100"
+              >
+                📋 Показать последний лог
+              </button>
+              
               <button
                 onClick={() => {
                   // Telegram Mini App integration
