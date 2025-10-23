@@ -1,5 +1,0 @@
-{
-  "env": {
-    "NEXT_PUBLIC_API_URL": "https://disciplined-cat-production.up.railway.app"
-  }
-}
