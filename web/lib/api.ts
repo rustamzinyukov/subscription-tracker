@@ -44,15 +44,15 @@ api.interceptors.response.use(
 );
 
 // API methods
-export const getCurrentUser = () => api.get('/auth/me');
-export const getSubscriptions = () => api.get('/subscriptions');
-export const getMonthlyAnalytics = () => api.get('/analytics/monthly');
-export const getYearlyAnalytics = () => api.get('/analytics/yearly');
-export const createSubscription = (data: any) => api.post('/subscriptions', data);
-export const updateSubscription = (id: number, data: any) => api.put(`/subscriptions/${id}`, data);
-export const deleteSubscription = (id: number) => api.delete(`/subscriptions/${id}`);
-export const login = (data: any) => api.post('/auth/login', data);
-export const register = (data: any) => api.post('/auth/register', data);
+export const getCurrentUser = () => api.get('/api/v1/auth/me');
+export const getSubscriptions = () => api.get('/api/v1/subscriptions');
+export const getMonthlyAnalytics = () => api.get('/api/v1/analytics/monthly');
+export const getYearlyAnalytics = () => api.get('/api/v1/analytics/yearly');
+export const createSubscription = (data: any) => api.post('/api/v1/subscriptions', data);
+export const updateSubscription = (id: number, data: any) => api.put(`/api/v1/subscriptions/${id}`, data);
+export const deleteSubscription = (id: number) => api.delete(`/api/v1/subscriptions/${id}`);
+export const login = (data: any) => api.post('/api/v1/auth/login', data);
+export const register = (data: any) => api.post('/api/v1/auth/register', data);
 
 // Create apiClient object with methods
 export const apiClient = {
