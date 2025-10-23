@@ -34,6 +34,9 @@ export default function HomePage() {
     
     const token = localStorage.getItem('access_token');
     addLog(`🔑 Токен в localStorage: ${token ? 'найден' : 'не найден'}`);
+    if (token) {
+      addLog(`🔑 Токен (первые 20 символов): ${token.substring(0, 20)}...`);
+    }
     
     if (!token) {
       addLog('❌ Токен не найден, перенаправляем на логин');
@@ -52,6 +55,7 @@ export default function HomePage() {
   const loadData = async () => {
     try {
       addLog('📤 Загружаем данные пользователя...');
+      addLog(`🔑 Токен перед запросом: ${localStorage.getItem('access_token')?.substring(0, 20)}...`);
       setLoading(true);
       const [userData, subscriptionsData] = await Promise.all([
         apiClient.getCurrentUser(),
