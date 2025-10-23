@@ -10,7 +10,7 @@ export const api = axios.create({
 });
 
 // Define API client interface
-interface ApiClient extends typeof api {
+interface ApiClient {
   getCurrentUser: () => Promise<any>;
   getSubscriptions: () => Promise<any>;
   getMonthlyAnalytics: () => Promise<any>;
