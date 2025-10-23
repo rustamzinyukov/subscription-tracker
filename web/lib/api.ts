@@ -30,6 +30,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
     console.log('✅ Authorization header set');
+    console.log(`🔑 Full Authorization header: Bearer ${token.substring(0, 20)}...`);
   } else {
     console.log('❌ No token found, request will be unauthorized');
   }
