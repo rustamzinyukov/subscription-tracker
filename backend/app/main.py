@@ -35,9 +35,8 @@ app.add_middleware(
 # Create database tables on startup
 @app.on_event("startup")
 async def startup_event():
-    from .core.database import drop_tables, create_tables
-    # Drop and recreate tables to ensure schema is up to date
-    drop_tables()
+    from .core.database import create_tables
+    # Create tables if they don't exist
     create_tables()
 
 # Health check endpoint
