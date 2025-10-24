@@ -12,6 +12,22 @@ from .core.database import get_db, create_tables
 from .core.auth import auth_manager, get_current_user
 from .models.database import User
 
+# Import migration function
+def run_migration():
+    """Run database migration on startup"""
+    try:
+        from alembic.config import Config
+        from alembic import command
+        import os
+        
+        print("🔄 Running database migration...")
+        alembic_cfg = Config("alembic.ini")
+        command.upgrade(alembic_cfg, "head")
+        print("✅ Database migration completed!")
+    except Exception as e:
+        print(f"⚠️ Migration failed (this might be normal for first run): {e}")
+        # Continue anyway - tables will be created by create_tables()
+
 load_dotenv()
 
 # Create FastAPI app
@@ -51,6 +67,9 @@ async def log_requests(request: Request, call_next):
 @app.on_event("startup")
 async def startup_event():
     from .core.database import create_tables
+    # Run migration first
+    run_migration()
+    
     # Create tables if they don't exist
     create_tables()
 
