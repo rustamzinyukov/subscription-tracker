@@ -151,7 +151,7 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription (игнорируем дополнительные поля из продвинутой формы)
+    # Create subscription with all advanced fields
     subscription = Subscription(
         user_id=current_user.id,
         name=subscription_data.name,
@@ -160,13 +160,23 @@ def create_subscription(
         currency=subscription_data.currency,
         next_billing_date=subscription_data.next_billing_date,
         frequency=subscription_data.frequency,
+        subscription_type=subscription_data.subscription_type,
+        interval_unit=subscription_data.interval_unit,
+        interval_count=subscription_data.interval_count,
+        has_trial=subscription_data.has_trial,
+        trial_start_date=subscription_data.trial_start_date,
+        trial_end_date=subscription_data.trial_end_date,
+        start_date=subscription_data.start_date,
+        duration_type=subscription_data.duration_type,
+        duration_value=subscription_data.duration_value,
+        end_date=subscription_data.end_date,
         category=subscription_data.category,
         provider=subscription_data.provider,
         logo_url=subscription_data.logo_url,
         website_url=subscription_data.website_url,
     )
     
-    print(f"🔍 Ignoring advanced fields: subscription_type, interval_unit, has_trial, etc.")
+    print(f"🔍 Saving advanced fields: subscription_type={subscription_data.subscription_type}, has_trial={subscription_data.has_trial}")
     
     db.add(subscription)
     db.commit()
