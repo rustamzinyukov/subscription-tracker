@@ -11,6 +11,10 @@ load_dotenv()
 # Database URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/subscription_tracker")
 
+def get_database_url():
+    """Get database URL for Alembic migrations"""
+    return DATABASE_URL
+
 # Create engine
 engine = create_engine(
     DATABASE_URL,

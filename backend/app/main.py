@@ -22,6 +22,11 @@ def run_migration():
         
         print("🔄 Running database migration...")
         
+        # Check database connection
+        from .core.database import get_database_url
+        db_url = get_database_url()
+        print(f"🔗 Database URL: {db_url[:50]}..." if len(db_url) > 50 else f"🔗 Database URL: {db_url}")
+        
         # Change to the root directory where alembic.ini is located
         os.chdir("/app")
         print(f"📁 Current directory: {os.getcwd()}")
