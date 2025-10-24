@@ -41,8 +41,10 @@ def run_migration():
         alembic_cfg = Config("alembic.ini")
         print(f"📁 Alembic config loaded: {alembic_cfg}")
         
+        print("🚀 Starting Alembic upgrade command...")
         command.upgrade(alembic_cfg, "head")
         print("✅ Database migration completed!")
+        print("🎉 All advanced subscription fields should now be available in the database!")
     except Exception as e:
         print(f"⚠️ Migration failed (this might be normal for first run): {e}")
         print(f"⚠️ Error details: {str(e)}")
