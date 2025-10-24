@@ -10,6 +10,8 @@ import SubscriptionCard from '@/components/SubscriptionCard';
 import AddSubscriptionButton from '@/components/AddSubscriptionButton';
 import StatsCard from '@/components/StatsCard';
 import UpcomingBills from '@/components/UpcomingBills';
+import Calendar from '@/components/Calendar';
+import DateModal from '@/components/DateModal';
 
 export default function HomePage() {
   const router = useRouter();
@@ -18,6 +20,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
 
   // Функция для логирования
   const addLog = (message: string) => {
@@ -140,6 +144,16 @@ export default function HomePage() {
     setSubscriptions(prev => [...prev, newSubscription]);
   };
 
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    setIsDateModalOpen(true);
+  };
+
+  const handleCloseDateModal = () => {
+    setIsDateModalOpen(false);
+    setSelectedDate(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -208,10 +222,19 @@ export default function HomePage() {
         {/* Upcoming Bills */}
         <UpcomingBills subscriptions={subscriptions} />
 
+        {/* Календарь */}
+        <div className="mb-8">
+          <Calendar
+            subscriptions={subscriptions}
+            onDateClick={handleDateClick}
+            onSubscriptionAdd={handleSubscriptionAdd}
+          />
+        </div>
+
         {/* Subscriptions Section */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Ваши подписки</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Все подписки</h2>
             <AddSubscriptionButton onSubscriptionAdd={handleSubscriptionAdd} />
           </div>
 
@@ -267,6 +290,17 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* Модальное окно для просмотра подписок на дату */}
+      <DateModal
+        isOpen={isDateModalOpen}
+        onClose={handleCloseDateModal}
+        date={selectedDate}
+        subscriptions={subscriptions}
+        onSubscriptionAdd={handleSubscriptionAdd}
+        onSubscriptionUpdate={handleSubscriptionUpdate}
+        onSubscriptionDelete={handleSubscriptionDelete}
+      />
     </div>
   );
 }
