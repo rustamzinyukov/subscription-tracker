@@ -53,11 +53,23 @@ def get_monthly_analytics(
                         Subscription.next_billing_date >= start_date,
                         Subscription.next_billing_date <= end_date
                     ),
-                    # One-time подписки созданные в периоде
+                    # One-time подписки созданные в периоде (или с start_date в периоде)
                     and_(
                         Subscription.subscription_type == "one_time",
-                        func.date(Subscription.created_at) >= start_date,
-                        func.date(Subscription.created_at) <= end_date
+                        or_(
+                            # Если есть start_date - используем его
+                            and_(
+                                Subscription.start_date.isnot(None),
+                                Subscription.start_date >= start_date,
+                                Subscription.start_date <= end_date
+                            ),
+                            # Если start_date отсутствует - используем created_at
+                            and_(
+                                Subscription.start_date.is_(None),
+                                func.date(Subscription.created_at) >= start_date,
+                                func.date(Subscription.created_at) <= end_date
+                            )
+                        )
                     )
                 )
             )
@@ -78,11 +90,23 @@ def get_monthly_analytics(
                         Subscription.next_billing_date >= start_date,
                         Subscription.next_billing_date <= end_date
                     ),
-                    # One-time подписки созданные в периоде
+                    # One-time подписки созданные в периоде (или с start_date в периоде)
                     and_(
                         Subscription.subscription_type == "one_time",
-                        func.date(Subscription.created_at) >= start_date,
-                        func.date(Subscription.created_at) <= end_date
+                        or_(
+                            # Если есть start_date - используем его
+                            and_(
+                                Subscription.start_date.isnot(None),
+                                Subscription.start_date >= start_date,
+                                Subscription.start_date <= end_date
+                            ),
+                            # Если start_date отсутствует - используем created_at
+                            and_(
+                                Subscription.start_date.is_(None),
+                                func.date(Subscription.created_at) >= start_date,
+                                func.date(Subscription.created_at) <= end_date
+                            )
+                        )
                     )
                 )
             )
