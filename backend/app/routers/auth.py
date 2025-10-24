@@ -39,7 +39,7 @@ def register_user(user_data: RegisterRequest, db: Session = Depends(get_db)):
     
     # Hash password if provided
     if user_data.password:
-        db_user.password_hash = auth_manager.get_password_hash(user_data.password)
+        db_user.hashed_password = auth_manager.get_password_hash(user_data.password)
     
     db.add(db_user)
     db.commit()
