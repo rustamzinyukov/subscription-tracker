@@ -15,7 +15,7 @@ from ..schemas.schemas import (
 
 router = APIRouter()
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("", response_model=PaginatedResponse)
 def get_subscriptions(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -96,7 +96,7 @@ def get_subscription(
     
     return subscription
 
-@router.post("/", response_model=SubscriptionResponse)
+@router.post("", response_model=SubscriptionResponse)
 def create_subscription(
     subscription_data: SubscriptionCreate,
     current_user: User = Depends(get_current_user),
