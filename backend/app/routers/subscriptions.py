@@ -218,11 +218,14 @@ def delete_subscription(
             detail="Subscription not found"
         )
     
-    # Soft delete - mark as cancelled
-    subscription.is_active = False
-    subscription.cancelled_at = datetime.utcnow()
+    # Hard delete - actually remove from database
+    print(f"🗑️ Deleting subscription {subscription_id} from database")
+    print(f"🗑️ Subscription name: {subscription.name}")
     
+    db.delete(subscription)
     db.commit()
+    
+    print(f"✅ Subscription {subscription_id} successfully deleted from database")
     
     return {"message": "Subscription successfully deleted"}
 
