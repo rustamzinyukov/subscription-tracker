@@ -33,7 +33,16 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
 
     try {
       setIsLoading(true);
-      const newSubscription = await apiClient.createSubscription({
+      
+      // Debug logging
+      console.log('🔍 Form data being sent:', {
+        name: formData.name,
+        amount: formData.amount,
+        next_billing_date: formData.next_billing_date,
+        frequency: formData.frequency
+      });
+      
+      const subscriptionData = {
         name: formData.name,
         description: formData.description || undefined,
         amount: parseFloat(formData.amount),
@@ -43,7 +52,11 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
         provider: formData.provider || undefined,
         logo_url: formData.logo_url || undefined,
         website_url: formData.website_url || undefined,
-      });
+      };
+      
+      console.log('🔍 Subscription data:', subscriptionData);
+      
+      const newSubscription = await apiClient.createSubscription(subscriptionData);
       
       onSubscriptionAdd(newSubscription);
       setIsModalOpen(false);
