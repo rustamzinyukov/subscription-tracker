@@ -18,6 +18,7 @@ export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
@@ -74,6 +75,11 @@ export default function HomePage() {
       const subscriptionsData = await apiClient.getSubscriptions();
       addLog('✅ getSubscriptions() успешен');
       
+      addLog('🚀 Вызываем apiClient.getMonthlyAnalytics()...');
+      const analyticsData = await apiClient.getMonthlyAnalytics();
+      addLog('✅ getMonthlyAnalytics() успешен');
+      addLog(`📊 Аналитика: ${analyticsData.total_spent} ${analyticsData.currency}, ${analyticsData.subscription_count} подписок`);
+      
       addLog('✅ Данные пользователя загружены успешно');
       
           // Debug logging for subscriptions
@@ -102,6 +108,7 @@ export default function HomePage() {
           }
       
       setUser(userData);
+      setAnalytics(analyticsData);
     } catch (err: any) {
       const errorLog = `❌ Ошибка загрузки данных: ${JSON.stringify({
         status: err.response?.status,
@@ -195,8 +202,9 @@ export default function HomePage() {
     );
   }
 
-  const totalMonthlySpend = calculateTotalMonthlySpend(subscriptions);
-  const activeSubscriptions = subscriptions.filter(sub => sub.is_active).length;
+  // Используем данные аналитики с бэкенда, если доступны, иначе локальные расчеты
+  const totalMonthlySpend = analytics?.total_spent || calculateTotalMonthlySpend(subscriptions);
+  const activeSubscriptions = analytics?.subscription_count || subscriptions.filter(sub => sub.is_active).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
