@@ -12,6 +12,7 @@ import StatsCard from '@/components/StatsCard';
 import UpcomingBills from '@/components/UpcomingBills';
 import Calendar from '@/components/Calendar';
 import DateModal from '@/components/DateModal';
+import AdvancedSubscriptionForm from '@/components/AdvancedSubscriptionForm';
 
 export default function HomePage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function HomePage() {
   const [logs, setLogs] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [isAdvancedFormOpen, setIsAdvancedFormOpen] = useState(false);
 
   // Функция для логирования
   const addLog = (message: string) => {
@@ -158,6 +160,14 @@ export default function HomePage() {
   const handleCloseDateModal = () => {
     setIsDateModalOpen(false);
     setSelectedDate(null);
+  };
+
+  const handleOpenAdvancedForm = () => {
+    setIsAdvancedFormOpen(true);
+  };
+
+  const handleCloseAdvancedForm = () => {
+    setIsAdvancedFormOpen(false);
   };
 
   if (loading) {
@@ -341,12 +351,20 @@ export default function HomePage() {
                     <div className="text-center py-8 text-gray-500">
                       <div className="text-4xl mb-2">📅</div>
                       <p className="text-sm">На эту дату нет подписок</p>
-                      <button
-                        onClick={() => setIsDateModalOpen(true)}
-                        className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
-                      >
-                        Добавить подписку
-                      </button>
+                      <div className="mt-3 space-y-2">
+                        <button
+                          onClick={handleOpenAdvancedForm}
+                          className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
+                        >
+                          Добавить подписку
+                        </button>
+                        <button
+                          onClick={() => setIsDateModalOpen(true)}
+                          className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm"
+                        >
+                          Простая форма
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -389,15 +407,23 @@ export default function HomePage() {
                         </div>
                       ))}
                       
-                      <button
-                        onClick={() => setIsDateModalOpen(true)}
-                        className="w-full mt-4 py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm flex items-center justify-center gap-2"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Добавить подписку
-                      </button>
+                      <div className="mt-4 space-y-2">
+                        <button
+                          onClick={handleOpenAdvancedForm}
+                          className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                          Добавить подписку
+                        </button>
+                        <button
+                          onClick={() => setIsDateModalOpen(true)}
+                          className="w-full py-2 px-4 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm"
+                        >
+                          Простая форма
+                        </button>
+                      </div>
                     </>
                   )}
                 </div>
@@ -449,6 +475,14 @@ export default function HomePage() {
         onSubscriptionAdd={handleSubscriptionAdd}
         onSubscriptionUpdate={handleSubscriptionUpdate}
         onSubscriptionDelete={handleSubscriptionDelete}
+      />
+
+      {/* Продвинутая форма добавления подписки */}
+      <AdvancedSubscriptionForm
+        isOpen={isAdvancedFormOpen}
+        onClose={handleCloseAdvancedForm}
+        selectedDate={selectedDate}
+        onSubscriptionAdd={handleSubscriptionAdd}
       />
     </div>
   );
