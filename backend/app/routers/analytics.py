@@ -35,23 +35,58 @@ def get_monthly_analytics(
     else:
         end_date = date(year, month + 1, 1) - timedelta(days=1)
     
-    # Get active subscriptions for the period (basic logic)
+    # Get active subscriptions for the period (including trial logic)
     subscriptions = db.query(Subscription).filter(
         and_(
             Subscription.user_id == current_user.id,
             Subscription.is_active == True,
-            Subscription.next_billing_date >= start_date,
-            Subscription.next_billing_date <= end_date
+            # Учитываем пробный период
+            or_(
+                # Обычные подписки
+                and_(
+                    Subscription.subscription_type == "recurring",
+                    Subscription.next_billing_date >= start_date,
+                    Subscription.next_billing_date <= end_date
+                ),
+                # Пробный период
+                and_(
+                    Subscription.has_trial == True,
+                    Subscription.trial_start_date <= end_date,
+                    Subscription.trial_end_date >= start_date
+                )
+            )
         )
     ).all()
     
-    # Calculate total spent (basic logic)
-    total_spent = sum(sub.amount for sub in subscriptions)
+    # Calculate total spent (with trial period logic)
+    total_spent = 0
+    for sub in subscriptions:
+        if sub.has_trial and sub.trial_start_date and sub.trial_end_date:
+            # Для пробного периода - считаем только если он активен в этом месяце
+            trial_start = sub.trial_start_date
+            trial_end = sub.trial_end_date
+            
+            # Проверяем, пересекается ли пробный период с запрашиваемым месяцем
+            if trial_start <= end_date and trial_end >= start_date:
+                # В пробном периоде - стоимость 0
+                print(f"🔍 Trial period for {sub.name}: {trial_start} to {trial_end} - cost: 0")
+                total_spent += 0
+            else:
+                # Обычная подписка - полная стоимость
+                total_spent += sub.amount
+        else:
+            # Обычная подписка - полная стоимость
+            total_spent += sub.amount
     
-    # Calculate category breakdown (basic logic)
+    # Calculate category breakdown (with trial period logic)
     category_breakdown = defaultdict(float)
     for sub in subscriptions:
-        category_breakdown[sub.category or "uncategorized"] += sub.amount
+        if sub.has_trial and sub.trial_start_date and sub.trial_end_date:
+            # В пробном периоде - стоимость 0
+            category_breakdown[sub.category or "uncategorized"] += 0
+        else:
+            # Обычная подписка - полная стоимость
+            category_breakdown[sub.category or "uncategorized"] += sub.amount
     
     # Get or create analytics record
     analytics = db.query(Analytics).filter(
