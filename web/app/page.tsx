@@ -481,7 +481,7 @@ export default function HomePage() {
       <AdvancedSubscriptionForm
         isOpen={isAdvancedFormOpen}
         onClose={handleCloseAdvancedForm}
-        selectedDate={selectedDate}
+        selectedDate={selectedDate || undefined}
         onSubscriptionAdd={handleSubscriptionAdd}
       />
     </div>
