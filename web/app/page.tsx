@@ -152,7 +152,7 @@ export default function HomePage() {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
-    setIsDateModalOpen(true);
+    // Не открываем модальное окно, просто выбираем дату для панели
   };
 
   const handleCloseDateModal = () => {
@@ -219,13 +219,102 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Календарь */}
-        <div className="mb-8">
-          <Calendar
-            subscriptions={subscriptions}
-            onDateClick={handleDateClick}
-            onSubscriptionAdd={handleSubscriptionAdd}
-          />
+        {/* Основной контент: Календарь + Панель */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Календарь (2/3 ширины) */}
+          <div className="lg:col-span-2">
+            <Calendar
+              subscriptions={subscriptions}
+              onDateClick={handleDateClick}
+              onSubscriptionAdd={handleSubscriptionAdd}
+            />
+          </div>
+          
+          {/* Панель подписок (1/3 ширины) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-lg p-6 h-fit">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {selectedDate ? `Подписки на ${selectedDate.toLocaleDateString('ru-RU')}` : 'Выберите дату'}
+              </h3>
+              
+              {selectedDate ? (
+                <div className="space-y-3">
+                  {subscriptions.filter(sub => {
+                    if (!sub.next_billing_date) return false;
+                    const billingDate = new Date(sub.next_billing_date);
+                    return billingDate.toDateString() === selectedDate.toDateString();
+                  }).length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-4xl mb-2">📅</div>
+                      <p className="text-sm">На эту дату нет подписок</p>
+                      <button
+                        onClick={() => setIsDateModalOpen(true)}
+                        className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
+                      >
+                        Добавить подписку
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {subscriptions.filter(sub => {
+                        if (!sub.next_billing_date) return false;
+                        const billingDate = new Date(sub.next_billing_date);
+                        return billingDate.toDateString() === selectedDate.toDateString();
+                      }).map((subscription) => (
+                        <div key={subscription.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            {subscription.logo_url ? (
+                              <img
+                                src={subscription.logo_url}
+                                alt={subscription.name}
+                                className="w-8 h-8 rounded-lg object-cover"
+                              />
+                            ) : (
+                              <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span className="text-indigo-600 font-bold text-sm">
+                                  {subscription.name?.[0]?.toUpperCase() || 'S'}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <h4 className="font-medium text-gray-900 text-sm">{subscription.name}</h4>
+                              <p className="text-xs text-gray-600">
+                                {formatCurrency(subscription.amount)} {subscription.frequency === 'monthly' ? 'в месяц' : 'в год'}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleSubscriptionDelete(subscription.id)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                            title="Удалить подписку"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                      
+                      <button
+                        onClick={() => setIsDateModalOpen(true)}
+                        className="w-full mt-4 py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Добавить подписку
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-4xl mb-2">📅</div>
+                  <p className="text-sm">Кликните на дату в календаре, чтобы увидеть подписки</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
       </main>
