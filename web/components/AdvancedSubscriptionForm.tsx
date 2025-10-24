@@ -140,6 +140,8 @@ export default function AdvancedSubscriptionForm({
         const startDate = validateDate(formData.start_date, 'Дата начала');
         subscriptionData = {
           ...subscriptionData,
+          next_billing_date: startDate.toISOString().split('T')[0], // Для one_time тоже нужен next_billing_date
+          frequency: 'one_time', // Добавляем frequency для one_time подписок
           start_date: startDate.toISOString().split('T')[0],
           duration_type: formData.duration_type,
         };
