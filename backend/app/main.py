@@ -22,7 +22,7 @@ def run_migration():
         
         print("🔄 Running database migration...")
         
-        # Change to the backend directory where alembic.ini is located
+        # Change to the root directory where alembic.ini is located
         os.chdir("/app")
         print(f"📁 Current directory: {os.getcwd()}")
         print(f"📁 Alembic.ini exists: {os.path.exists('alembic.ini')}")
@@ -30,6 +30,8 @@ def run_migration():
         print(f"📁 Alembic directory exists: {os.path.exists('alembic')}")
         if os.path.exists('alembic'):
             print(f"📁 Files in alembic: {os.listdir('alembic')}")
+            if os.path.exists('alembic/versions'):
+                print(f"📁 Files in alembic/versions: {os.listdir('alembic/versions')}")
         
         alembic_cfg = Config("alembic.ini")
         print(f"📁 Alembic config loaded: {alembic_cfg}")
