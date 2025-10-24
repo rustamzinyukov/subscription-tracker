@@ -16,12 +16,18 @@ router = APIRouter()
 
 @router.get("/monthly")
 def get_monthly_analytics(
-    year: int = Query(..., description="Year for monthly analytics"),
-    month: int = Query(..., description="Month for monthly analytics"),
+    year: int = Query(None, description="Year for monthly analytics"),
+    month: int = Query(None, description="Month for monthly analytics"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get monthly analytics for subscriptions - ULTRA SIMPLE VERSION"""
+    
+    # Используем текущую дату, если параметры не указаны
+    if year is None or month is None:
+        now = datetime.now()
+        year = now.year
+        month = now.month
     
     print(f"🔍 Analytics request for {year}-{month:02d} by user {current_user.id}")
     
