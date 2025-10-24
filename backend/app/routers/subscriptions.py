@@ -127,6 +127,9 @@ def create_subscription(
     db.commit()
     db.refresh(subscription)
     
+    print(f"🔍 Created subscription: {subscription.name}, amount: {subscription.amount}")
+    print(f"🔍 Subscription object: {subscription}")
+    
     return subscription
 
 @router.put("/{subscription_id}", response_model=SubscriptionResponse)
