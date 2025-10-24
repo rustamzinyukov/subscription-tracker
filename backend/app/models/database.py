@@ -55,8 +55,8 @@ class Subscription(Base):
     subscription_type = Column(String, default="recurring", nullable=False)  # recurring, one_time
     
     # Поля для recurring подписок
-    next_billing_date = Column(Date, nullable=True)  # Может быть null для one_time
-    frequency = Column(Enum(FrequencyEnum), nullable=True)  # Может быть null для one_time
+    next_billing_date = Column(Date, nullable=False)  # Временно оставляем NOT NULL
+    frequency = Column(Enum(FrequencyEnum), nullable=False)  # Временно оставляем NOT NULL
     interval_unit = Column(String, nullable=True)  # day, week, month, year
     interval_count = Column(Integer, default=1, nullable=True)
     

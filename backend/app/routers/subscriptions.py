@@ -151,8 +151,15 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription with date calculations
+    # Create subscription with backward compatibility
     subscription_data_dict = subscription_data.dict()
+    
+    # Ensure backward compatibility - set default values for existing fields
+    if 'next_billing_date' not in subscription_data_dict or subscription_data_dict['next_billing_date'] is None:
+        subscription_data_dict['next_billing_date'] = date.today()
+    
+    if 'frequency' not in subscription_data_dict or subscription_data_dict['frequency'] is None:
+        subscription_data_dict['frequency'] = 'monthly'
     
     # Calculate end_date for one_time subscriptions
     if subscription_data_dict.get('subscription_type') == 'one_time':

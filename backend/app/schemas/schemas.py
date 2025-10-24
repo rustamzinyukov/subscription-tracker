@@ -93,8 +93,8 @@ class SubscriptionBase(BaseModel):
     subscription_type: str = "recurring"  # recurring, one_time
     
     # Поля для recurring подписок
-    next_billing_date: Optional[date] = None
-    frequency: Optional[FrequencyEnum] = None
+    next_billing_date: date  # Обязательное поле
+    frequency: FrequencyEnum  # Обязательное поле
     interval_unit: Optional[str] = None  # day, week, month, year
     interval_count: Optional[int] = 1
     
