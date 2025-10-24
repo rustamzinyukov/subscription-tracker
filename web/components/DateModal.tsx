@@ -32,7 +32,7 @@ export default function DateModal({
     amount: '',
     currency: 'RUB',
     frequency: 'monthly' as 'monthly' | 'yearly',
-    next_billing_date: date ? date.toISOString().split('T')[0] : '',
+    next_billing_date: date ? date.toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
     provider: '',
     logo_url: '',
     website_url: '',
@@ -59,17 +59,30 @@ export default function DateModal({
     try {
       setIsLoading(true);
       
-      const subscriptionData = {
-        name: formData.name,
-        description: formData.description || undefined,
-        amount: parseFloat(formData.amount),
-        currency: formData.currency,
-        frequency: formData.frequency,
-        next_billing_date: new Date(formData.next_billing_date).toISOString(),
-        provider: formData.provider || undefined,
-        logo_url: formData.logo_url || undefined,
-        website_url: formData.website_url || undefined,
-      };
+          // Безопасная обработка даты
+          let billingDate;
+          try {
+            billingDate = new Date(formData.next_billing_date);
+            if (isNaN(billingDate.getTime())) {
+              throw new Error('Invalid date');
+            }
+          } catch (error) {
+            console.error('Invalid date format:', formData.next_billing_date);
+            alert('Неверный формат даты. Пожалуйста, выберите корректную дату.');
+            return;
+          }
+
+          const subscriptionData = {
+            name: formData.name,
+            description: formData.description || undefined,
+            amount: parseFloat(formData.amount),
+            currency: formData.currency,
+            frequency: formData.frequency,
+            next_billing_date: billingDate.toISOString(),
+            provider: formData.provider || undefined,
+            logo_url: formData.logo_url || undefined,
+            website_url: formData.website_url || undefined,
+          };
       
       const newSubscription = await apiClient.createSubscription(subscriptionData);
       onSubscriptionAdd(newSubscription);
@@ -81,7 +94,7 @@ export default function DateModal({
         amount: '',
         currency: 'RUB',
         frequency: 'monthly',
-        next_billing_date: date.toISOString().split('T')[0],
+        next_billing_date: date.toLocaleDateString('en-CA'),
         provider: '',
         logo_url: '',
         website_url: '',
