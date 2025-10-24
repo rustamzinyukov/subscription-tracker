@@ -78,12 +78,24 @@ export default function HomePage() {
           console.log('🔍 Subscriptions total:', subscriptionsData.total);
           console.log('🔍 Subscriptions page:', subscriptionsData.page);
           console.log('🔍 Full subscriptions data structure:', JSON.stringify(subscriptionsData, null, 2));
+          
+          // Проверяем, что именно приходит от API
+          if (Array.isArray(subscriptionsData)) {
+            console.log('🔍 API вернул массив напрямую:', subscriptionsData);
+            setSubscriptions(subscriptionsData);
+          } else if (subscriptionsData.items) {
+            console.log('🔍 API вернул объект с items:', subscriptionsData.items);
+            setSubscriptions(subscriptionsData.items);
+          } else {
+            console.log('🔍 Неизвестная структура данных:', subscriptionsData);
+            setSubscriptions([]);
+          }
+          
           if (subscriptionsData.items && subscriptionsData.items.length > 0) {
             console.log('🔍 First subscription:', subscriptionsData.items[0]);
           }
       
       setUser(userData);
-      setSubscriptions(subscriptionsData.items || []);
     } catch (err: any) {
       const errorLog = `❌ Ошибка загрузки данных: ${JSON.stringify({
         status: err.response?.status,

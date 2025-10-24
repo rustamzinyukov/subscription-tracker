@@ -70,8 +70,37 @@ def get_subscriptions(
     for sub in subscriptions:
         print(f"🔍 Subscription: name='{sub.name}', amount={sub.amount}, next_billing_date={sub.next_billing_date}")
     
+    # Convert subscriptions to response format
+    subscription_responses = []
+    for sub in subscriptions:
+        try:
+            response = SubscriptionResponse.from_orm(sub).dict()
+            subscription_responses.append(response)
+            print(f"🔍 Converted subscription: {response}")
+        except Exception as e:
+            print(f"❌ Error converting subscription {sub.id}: {e}")
+            # Fallback: create response manually
+            subscription_responses.append({
+                "id": sub.id,
+                "name": sub.name,
+                "description": sub.description,
+                "amount": sub.amount,
+                "currency": sub.currency,
+                "frequency": sub.frequency,
+                "next_billing_date": sub.next_billing_date.isoformat() if sub.next_billing_date else None,
+                "is_active": sub.is_active,
+                "category": sub.category,
+                "provider": sub.provider,
+                "logo_url": sub.logo_url,
+                "website_url": sub.website_url,
+                "created_at": sub.created_at.isoformat() if sub.created_at else None,
+                "updated_at": sub.updated_at.isoformat() if sub.updated_at else None
+            })
+    
+    print(f"🔍 Final subscription_responses: {len(subscription_responses)} items")
+    
     return PaginatedResponse(
-        items=[SubscriptionResponse.from_orm(sub).dict() for sub in subscriptions],
+        items=subscription_responses,
         total=total,
         page=page,
         size=size,
