@@ -13,6 +13,7 @@ class FrequencyEnum(str, enum.Enum):
     WEEKLY = "weekly"
     MONTHLY = "monthly"
     YEARLY = "yearly"
+    ONE_TIME = "one_time"
 
 class NotificationChannelEnum(str, enum.Enum):
     TELEGRAM = "telegram"
