@@ -55,6 +55,9 @@ class Subscription(Base):
     next_billing_date = Column(Date, nullable=False)
     frequency = Column(Enum(FrequencyEnum), nullable=False)
     
+    # Дополнительные поля (для совместимости с фронтендом, но не сохраняются в БД)
+    # Эти поля будут игнорироваться при создании подписки
+    
     # Общие поля
     is_active = Column(Boolean, default=True, index=True)
     category = Column(String, nullable=True, index=True)

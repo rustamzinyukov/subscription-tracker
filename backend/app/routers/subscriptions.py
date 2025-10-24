@@ -151,7 +151,7 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription
+    # Create subscription (игнорируем дополнительные поля из продвинутой формы)
     subscription = Subscription(
         user_id=current_user.id,
         name=subscription_data.name,
@@ -165,6 +165,8 @@ def create_subscription(
         logo_url=subscription_data.logo_url,
         website_url=subscription_data.website_url,
     )
+    
+    print(f"🔍 Ignoring advanced fields: subscription_type, interval_unit, has_trial, etc.")
     
     db.add(subscription)
     db.commit()
