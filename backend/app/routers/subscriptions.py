@@ -65,6 +65,11 @@ def get_subscriptions(
     # Calculate pages
     pages = (total + size - 1) // size
     
+    # Debug logging
+    print(f"🔍 Returning {len(subscriptions)} subscriptions for user {current_user.id}")
+    for sub in subscriptions:
+        print(f"🔍 Subscription: name='{sub.name}', amount={sub.amount}, next_billing_date={sub.next_billing_date}")
+    
     return PaginatedResponse(
         items=[SubscriptionResponse.from_orm(sub).dict() for sub in subscriptions],
         total=total,
