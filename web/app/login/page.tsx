@@ -64,18 +64,18 @@ export default function LoginPage() {
         const requestLog = `📤 Отправляем запрос на логин: ${new Date().toISOString()}`;
         addLog(requestLog);
         
-        const response = await apiClient.login(loginData);
-        
-        const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
-        addLog(successLog);
-        
-        // Проверяем структуру ответа
-        addLog(`🔍 Структура ответа: data=${JSON.stringify(response.data)}`);
-        addLog(`🔍 access_token в response: ${response.data?.access_token ? 'найден' : 'не найден'}`);
-        addLog(`🔍 access_token значение: ${response.data?.access_token || 'undefined'}`);
-        
-        addLog(`🔍 Сохраняем токен: ${response.data?.access_token || 'undefined'}`);
-        localStorage.setItem('access_token', response.data?.access_token || '');
+            const response = await apiClient.login(loginData);
+            
+            const successLog = `✅ Логин успешен! ${new Date().toISOString()} - response: ${JSON.stringify(response)}`;
+            addLog(successLog);
+            
+            // Проверяем структуру ответа
+            addLog(`🔍 Структура ответа: data=${JSON.stringify(response)}`);
+            addLog(`🔍 access_token в response: ${response?.access_token ? 'найден' : 'не найден'}`);
+            addLog(`🔍 access_token значение: ${response?.access_token || 'undefined'}`);
+            
+            addLog(`🔍 Сохраняем токен: ${response?.access_token || 'undefined'}`);
+            localStorage.setItem('access_token', response?.access_token || '');
         
         const tokenLog = `💾 Токен сохранен в localStorage: ${new Date().toISOString()}`;
         addLog(tokenLog);

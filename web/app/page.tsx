@@ -70,12 +70,17 @@ export default function HomePage() {
       
       addLog('✅ Данные пользователя загружены успешно');
       
-      // Debug logging for subscriptions
-      console.log('🔍 Raw subscriptions data from API:', subscriptionsData);
-      console.log('🔍 Subscriptions items:', subscriptionsData.items);
-      if (subscriptionsData.items && subscriptionsData.items.length > 0) {
-        console.log('🔍 First subscription:', subscriptionsData.items[0]);
-      }
+          // Debug logging for subscriptions
+          console.log('🔍 Raw subscriptions data from API:', subscriptionsData);
+          console.log('🔍 Subscriptions data type:', typeof subscriptionsData);
+          console.log('🔍 Subscriptions data keys:', Object.keys(subscriptionsData));
+          console.log('🔍 Subscriptions items:', subscriptionsData.items);
+          console.log('🔍 Subscriptions total:', subscriptionsData.total);
+          console.log('🔍 Subscriptions page:', subscriptionsData.page);
+          console.log('🔍 Full subscriptions data structure:', JSON.stringify(subscriptionsData, null, 2));
+          if (subscriptionsData.items && subscriptionsData.items.length > 0) {
+            console.log('🔍 First subscription:', subscriptionsData.items[0]);
+          }
       
       setUser(userData);
       setSubscriptions(subscriptionsData.items || []);
