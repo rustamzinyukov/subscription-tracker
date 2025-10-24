@@ -25,7 +25,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     # telegram_id = Column(String, unique=True, index=True, nullable=True, default=None)  # Temporarily disabled for Supabase
     email = Column(String, unique=True, index=True, nullable=True)
-    password_hash = Column(String, nullable=True)
+    # password_hash = Column(String, nullable=True)  # Temporarily disabled for Supabase
     username = Column(String, nullable=True)
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
