@@ -152,6 +152,64 @@ def health_check():
         "version": "1.0.0"
     }
 
+# Debug endpoint to check database data
+@app.get("/debug/data")
+def debug_data():
+    """Debug endpoint to check database data"""
+    from .core.database import SessionLocal
+    from .models.database import User, Subscription
+    
+    db = SessionLocal()
+    try:
+        # Count users
+        user_count = db.query(User).count()
+        
+        # Count subscriptions
+        subscription_count = db.query(Subscription).count()
+        
+        # Get first few users (without passwords)
+        users = db.query(User).limit(5).all()
+        user_list = []
+        for user in users:
+            user_list.append({
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "is_active": user.is_active,
+                "is_premium": user.is_premium,
+                "created_at": user.created_at
+            })
+        
+        # Get first few subscriptions
+        subscriptions = db.query(Subscription).limit(5).all()
+        subscription_list = []
+        for sub in subscriptions:
+            subscription_list.append({
+                "id": sub.id,
+                "user_id": sub.user_id,
+                "name": sub.name,
+                "amount": sub.amount,
+                "currency": sub.currency,
+                "next_billing_date": sub.next_billing_date,
+                "is_active": sub.is_active,
+                "created_at": sub.created_at
+            })
+        
+        return {
+            "database_status": "connected",
+            "user_count": user_count,
+            "subscription_count": subscription_count,
+            "users": user_list,
+            "subscriptions": subscription_list
+        }
+    except Exception as e:
+        return {
+            "database_status": "error",
+            "error": str(e)
+        }
+    finally:
+        db.close()
+
 # Root endpoint
 @app.get("/")
 def root():
