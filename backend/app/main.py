@@ -133,15 +133,15 @@ async def log_requests(request: Request, call_next):
     
     return response
 
-# Create database tables on startup
-@app.on_event("startup")
-async def startup_event():
-    from .core.database import create_tables
-    # Run migration first
-    run_migration()
-    
-    # Create tables if they don't exist
-    create_tables()
+    # Create database tables on startup
+    @app.on_event("startup")
+    async def startup_event():
+        from .core.database import create_tables
+        # Run migration first (temporarily disabled)
+        # run_migration()
+        
+        # Create tables if they don't exist
+        create_tables()
 
 # Health check endpoint
 @app.get("/health")

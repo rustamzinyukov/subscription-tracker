@@ -41,3 +41,4 @@ def downgrade() -> None:
     op.drop_column('subscriptions', 'interval_count')
     op.drop_column('subscriptions', 'interval_unit')
     op.drop_column('subscriptions', 'subscription_type')
+
