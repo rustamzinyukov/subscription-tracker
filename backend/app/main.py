@@ -70,9 +70,29 @@ def run_migration():
         print(f"📁 Alembic config loaded: {alembic_cfg}")
         
         print("🚀 Starting Alembic upgrade command...")
-        command.upgrade(alembic_cfg, "head")
-        print("✅ Database migration completed!")
-        print("🎉 All advanced subscription fields should now be available in the database!")
+        
+        # Add timeout and more detailed logging
+        import signal
+        import time
+        
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Migration timed out after 30 seconds")
+        
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(30)  # 30 second timeout
+        
+        try:
+            command.upgrade(alembic_cfg, "head")
+            signal.alarm(0)  # Cancel timeout
+            print("✅ Database migration completed!")
+            print("🎉 All advanced subscription fields should now be available in the database!")
+        except TimeoutError:
+            print("⏰ Migration timed out after 30 seconds")
+            print("❌ Migration may have failed or is taking too long")
+        except Exception as e:
+            signal.alarm(0)  # Cancel timeout
+            print(f"❌ Migration failed with error: {e}")
+            raise
     except Exception as e:
         print(f"⚠️ Migration failed (this might be normal for first run): {e}")
         print(f"⚠️ Error details: {str(e)}")
