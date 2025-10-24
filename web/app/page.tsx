@@ -203,17 +203,111 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Только основная статистика */}
+        {/* Панель аналитики с временными индикаторами */}
         <div className="mb-6">
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Общие расходы в месяц</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {/* Общие расходы */}
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-500 mb-1">Расходы в месяц</h3>
                 <p className="text-2xl font-bold text-indigo-600">{formatCurrency(totalMonthlySpend, 'RUB')}</p>
+                <p className="text-xs text-gray-500">{activeSubscriptions} подписок</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Активных подписок</p>
-                <p className="text-xl font-semibold text-gray-900">{activeSubscriptions}</p>
+
+              {/* Ближайший платеж */}
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-500 mb-1">Ближайший платеж</h3>
+                {(() => {
+                  const today = new Date();
+                  const upcomingPayments = subscriptions
+                    .filter(sub => sub.is_active && sub.next_billing_date)
+                    .map(sub => ({
+                      ...sub,
+                      daysUntil: Math.ceil((new Date(sub.next_billing_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+                    }))
+                    .filter(sub => sub.daysUntil >= 0)
+                    .sort((a, b) => a.daysUntil - b.daysUntil);
+
+                  if (upcomingPayments.length === 0) {
+                    return (
+                      <>
+                        <p className="text-lg font-semibold text-gray-400">Нет</p>
+                        <p className="text-xs text-gray-500">платежей</p>
+                      </>
+                    );
+                  }
+
+                  const nearest = upcomingPayments[0];
+                  const totalAmount = upcomingPayments
+                    .filter(sub => sub.daysUntil === nearest.daysUntil)
+                    .reduce((sum, sub) => sum + sub.amount, 0);
+
+                  return (
+                    <>
+                      <p className="text-lg font-semibold text-orange-600">
+                        {nearest.daysUntil === 0 ? 'Сегодня' : 
+                         nearest.daysUntil === 1 ? 'Завтра' : 
+                         `через ${nearest.daysUntil} дн.`}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatCurrency(totalAmount, 'RUB')}</p>
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* Платежи на этой неделе */}
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-500 mb-1">На этой неделе</h3>
+                {(() => {
+                  const today = new Date();
+                  const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                  
+                  const thisWeekPayments = subscriptions.filter(sub => {
+                    if (!sub.is_active || !sub.next_billing_date) return false;
+                    const paymentDate = new Date(sub.next_billing_date);
+                    return paymentDate >= today && paymentDate <= weekFromNow;
+                  });
+
+                  const totalAmount = thisWeekPayments.reduce((sum, sub) => sum + sub.amount, 0);
+
+                  return (
+                    <>
+                      <p className="text-lg font-semibold text-blue-600">{thisWeekPayments.length}</p>
+                      <p className="text-xs text-gray-500">{formatCurrency(totalAmount, 'RUB')}</p>
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* Просроченные платежи */}
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-500 mb-1">Просрочено</h3>
+                {(() => {
+                  const today = new Date();
+                  const overduePayments = subscriptions.filter(sub => {
+                    if (!sub.is_active || !sub.next_billing_date) return false;
+                    const paymentDate = new Date(sub.next_billing_date);
+                    return paymentDate < today;
+                  });
+
+                  const totalAmount = overduePayments.reduce((sum, sub) => sum + sub.amount, 0);
+
+                  if (overduePayments.length === 0) {
+                    return (
+                      <>
+                        <p className="text-lg font-semibold text-green-600">0</p>
+                        <p className="text-xs text-gray-500">все в порядке</p>
+                      </>
+                    );
+                  }
+
+                  return (
+                    <>
+                      <p className="text-lg font-semibold text-red-600">{overduePayments.length}</p>
+                      <p className="text-xs text-gray-500">{formatCurrency(totalAmount, 'RUB')}</p>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
