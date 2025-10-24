@@ -32,7 +32,7 @@ export default function AdvancedSubscriptionForm({
     currency: 'RUB',
     
     // Recurring поля
-    next_payment_date: selectedDate ? selectedDate.toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
+    next_billing_date: selectedDate ? selectedDate.toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
     interval_unit: 'month' as IntervalUnit,
     interval_count: 1,
     
@@ -58,7 +58,7 @@ export default function AdvancedSubscriptionForm({
       const dateStr = selectedDate.toLocaleDateString('en-CA');
       setFormData(prev => ({
         ...prev,
-        next_payment_date: dateStr,
+        next_billing_date: dateStr,
         start_date: dateStr,
         trial_start_date: dateStr,
       }));
@@ -109,7 +109,7 @@ export default function AdvancedSubscriptionForm({
       };
 
       if (subscriptionType === 'recurring') {
-        const nextPaymentDate = validateDate(formData.next_payment_date, 'Дата следующего платежа');
+        const nextPaymentDate = validateDate(formData.next_billing_date, 'Дата следующего платежа');
         subscriptionData = {
           ...subscriptionData,
           next_billing_date: nextPaymentDate.toISOString().split('T')[0],
@@ -163,7 +163,7 @@ export default function AdvancedSubscriptionForm({
         name: '',
         amount: '',
         currency: 'RUB',
-        next_payment_date: new Date().toLocaleDateString('en-CA'),
+        next_billing_date: new Date().toLocaleDateString('en-CA'),
         interval_unit: 'month',
         interval_count: 1,
         trial_start_date: new Date().toLocaleDateString('en-CA'),
@@ -319,8 +319,8 @@ export default function AdvancedSubscriptionForm({
                     </label>
                     <input
                       type="date"
-                      value={formData.next_payment_date}
-                      onChange={(e) => setFormData({ ...formData, next_payment_date: e.target.value })}
+                      value={formData.next_billing_date}
+                      onChange={(e) => setFormData({ ...formData, next_billing_date: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       required
                     />
