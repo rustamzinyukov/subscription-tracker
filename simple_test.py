@@ -43,7 +43,8 @@ def simple_test():
         "amount": 100.0,
         "currency": "RUB",
         "frequency": "one_time",
-        "subscription_type": "one_time"
+        "subscription_type": "one_time",
+        "start_date": "2025-10-24"  # Добавляем start_date!
     }
     
     print(f"Данные: {json.dumps(one_time_data, indent=2)}")
