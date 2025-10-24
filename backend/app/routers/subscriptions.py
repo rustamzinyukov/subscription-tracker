@@ -171,7 +171,7 @@ def create_subscription(
     db.refresh(subscription)
     
     print(f"🔍 Created subscription: {subscription.name}, amount: {subscription.amount}")
-        print(f"🔍 Subscription created successfully")
+    print(f"🔍 Subscription created successfully")
     print(f"🔍 Subscription object: {subscription}")
     
     return subscription
