@@ -26,14 +26,38 @@ def get_monthly_analytics(
     print(f"🔍 Analytics request for {year}-{month:02d} by user {current_user.id}")
     
     try:
-        # Простейший ответ без сложной логики
+        # Подсчитываем подписки
+        total_subscriptions = db.query(Subscription).filter(
+            and_(
+                Subscription.user_id == current_user.id,
+                Subscription.is_active == True
+            )
+        ).count()
+        
+        print(f"🔍 Total active subscriptions: {total_subscriptions}")
+        
+        # Простой расчет расходов
+        total_spent = 0.0
+        subscriptions = db.query(Subscription).filter(
+            and_(
+                Subscription.user_id == current_user.id,
+                Subscription.is_active == True
+            )
+        ).all()
+        
+        for sub in subscriptions:
+            print(f"🔍 Subscription: {sub.name} - {sub.amount} {sub.currency}")
+            total_spent += sub.amount
+        
+        print(f"🔍 Total spent: {total_spent}")
+        
         return {
             "user_id": current_user.id,
             "period_start": f"{year}-{month:02d}-01",
             "period_end": f"{year}-{month:02d}-28",
-            "total_spent": 0.0,
+            "total_spent": total_spent,
             "currency": "RUB",
-            "subscription_count": 0,
+            "subscription_count": total_subscriptions,
             "category_breakdown": "{}"
         }
         
