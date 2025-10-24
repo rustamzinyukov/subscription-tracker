@@ -21,11 +21,20 @@ def run_migration():
         import os
         
         print("🔄 Running database migration...")
+        
+        # Change to the backend directory where alembic.ini is located
+        os.chdir("/app")
+        print(f"📁 Current directory: {os.getcwd()}")
+        print(f"📁 Alembic.ini exists: {os.path.exists('alembic.ini')}")
+        
         alembic_cfg = Config("alembic.ini")
+        print(f"📁 Alembic config loaded: {alembic_cfg}")
+        
         command.upgrade(alembic_cfg, "head")
         print("✅ Database migration completed!")
     except Exception as e:
         print(f"⚠️ Migration failed (this might be normal for first run): {e}")
+        print(f"⚠️ Error details: {str(e)}")
         # Continue anyway - tables will be created by create_tables()
 
 load_dotenv()
