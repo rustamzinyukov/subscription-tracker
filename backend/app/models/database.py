@@ -50,8 +50,28 @@ class Subscription(Base):
     description = Column(Text, nullable=True)
     amount = Column(Float, nullable=False)
     currency = Column(String, default="RUB", nullable=False)
-    next_billing_date = Column(Date, nullable=False)
-    frequency = Column(Enum(FrequencyEnum), nullable=False)
+    
+    # Тип подписки
+    subscription_type = Column(String, default="recurring", nullable=False)  # recurring, one_time
+    
+    # Поля для recurring подписок
+    next_billing_date = Column(Date, nullable=True)  # Может быть null для one_time
+    frequency = Column(Enum(FrequencyEnum), nullable=True)  # Может быть null для one_time
+    interval_unit = Column(String, nullable=True)  # day, week, month, year
+    interval_count = Column(Integer, default=1, nullable=True)
+    
+    # Поля для пробного периода
+    has_trial = Column(Boolean, default=False, nullable=False)
+    trial_start_date = Column(Date, nullable=True)
+    trial_end_date = Column(Date, nullable=True)
+    
+    # Поля для one_time подписок
+    start_date = Column(Date, nullable=True)  # Дата начала для one_time
+    duration_type = Column(String, nullable=True)  # days, weeks, months, years, indefinite
+    duration_value = Column(Integer, nullable=True)  # Количество единиц
+    end_date = Column(Date, nullable=True)  # Дата окончания (рассчитывается)
+    
+    # Общие поля
     is_active = Column(Boolean, default=True, index=True)
     category = Column(String, nullable=True, index=True)
     provider = Column(String, nullable=True)  # Netflix, Spotify, etc.

@@ -151,10 +151,39 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription
+    # Create subscription with date calculations
+    subscription_data_dict = subscription_data.dict()
+    
+    # Calculate end_date for one_time subscriptions
+    if subscription_data_dict.get('subscription_type') == 'one_time':
+        start_date = subscription_data_dict.get('start_date')
+        duration_type = subscription_data_dict.get('duration_type')
+        duration_value = subscription_data_dict.get('duration_value')
+        
+        if start_date and duration_type and duration_type != 'indefinite' and duration_value:
+            from datetime import timedelta
+            
+            start_date_obj = start_date if isinstance(start_date, date) else start_date
+            end_date = start_date_obj
+            
+            if duration_type == 'days':
+                end_date = start_date_obj + timedelta(days=duration_value)
+            elif duration_type == 'weeks':
+                end_date = start_date_obj + timedelta(weeks=duration_value)
+            elif duration_type == 'months':
+                # Approximate month calculation
+                end_date = start_date_obj + timedelta(days=duration_value * 30)
+            elif duration_type == 'years':
+                # Approximate year calculation
+                end_date = start_date_obj + timedelta(days=duration_value * 365)
+            
+            subscription_data_dict['end_date'] = end_date
+            
+            print(f"🔍 Calculated end_date for one_time subscription: {end_date}")
+    
     subscription = Subscription(
         user_id=current_user.id,
-        **subscription_data.dict()
+        **subscription_data_dict
     )
     
     db.add(subscription)
@@ -162,6 +191,7 @@ def create_subscription(
     db.refresh(subscription)
     
     print(f"🔍 Created subscription: {subscription.name}, amount: {subscription.amount}")
+    print(f"🔍 Subscription type: {subscription.subscription_type}")
     print(f"🔍 Subscription object: {subscription}")
     
     return subscription

@@ -88,8 +88,28 @@ class SubscriptionBase(BaseModel):
     description: Optional[str] = None
     amount: float
     currency: str = "RUB"
-    next_billing_date: date
-    frequency: FrequencyEnum
+    
+    # Тип подписки
+    subscription_type: str = "recurring"  # recurring, one_time
+    
+    # Поля для recurring подписок
+    next_billing_date: Optional[date] = None
+    frequency: Optional[FrequencyEnum] = None
+    interval_unit: Optional[str] = None  # day, week, month, year
+    interval_count: Optional[int] = 1
+    
+    # Поля для пробного периода
+    has_trial: Optional[bool] = False
+    trial_start_date: Optional[date] = None
+    trial_end_date: Optional[date] = None
+    
+    # Поля для one_time подписок
+    start_date: Optional[date] = None
+    duration_type: Optional[str] = None  # days, weeks, months, years, indefinite
+    duration_value: Optional[int] = None
+    end_date: Optional[date] = None
+    
+    # Общие поля
     category: Optional[str] = None
     provider: Optional[str] = None
     logo_url: Optional[str] = None
@@ -108,6 +128,13 @@ class SubscriptionBase(BaseModel):
             raise ValueError(f'Currency must be one of: {allowed_currencies}')
         return v
 
+    @validator('subscription_type')
+    def validate_subscription_type(cls, v):
+        allowed_types = ['recurring', 'one_time']
+        if v not in allowed_types:
+            raise ValueError(f'Subscription type must be one of: {allowed_types}')
+        return v
+
 class SubscriptionCreate(SubscriptionBase):
     pass
 
@@ -116,8 +143,28 @@ class SubscriptionUpdate(BaseModel):
     description: Optional[str] = None
     amount: Optional[float] = None
     currency: Optional[str] = None
+    
+    # Тип подписки
+    subscription_type: Optional[str] = None
+    
+    # Поля для recurring подписок
     next_billing_date: Optional[date] = None
     frequency: Optional[FrequencyEnum] = None
+    interval_unit: Optional[str] = None
+    interval_count: Optional[int] = None
+    
+    # Поля для пробного периода
+    has_trial: Optional[bool] = None
+    trial_start_date: Optional[date] = None
+    trial_end_date: Optional[date] = None
+    
+    # Поля для one_time подписок
+    start_date: Optional[date] = None
+    duration_type: Optional[str] = None
+    duration_value: Optional[int] = None
+    end_date: Optional[date] = None
+    
+    # Общие поля
     is_active: Optional[bool] = None
     category: Optional[str] = None
     provider: Optional[str] = None
@@ -128,6 +175,14 @@ class SubscriptionUpdate(BaseModel):
     def validate_amount(cls, v):
         if v is not None and v <= 0:
             raise ValueError('Amount must be positive')
+        return v
+
+    @validator('subscription_type')
+    def validate_subscription_type(cls, v):
+        if v is not None:
+            allowed_types = ['recurring', 'one_time']
+            if v not in allowed_types:
+                raise ValueError(f'Subscription type must be one of: {allowed_types}')
         return v
 
 class SubscriptionResponse(SubscriptionBase):
