@@ -70,7 +70,7 @@ export default function HomePage() {
       
       addLog('✅ Данные пользователя загружены успешно');
       setUser(userData);
-      setSubscriptions(subscriptionsData);
+      setSubscriptions(subscriptionsData.items || []);
     } catch (err: any) {
       const errorLog = `❌ Ошибка загрузки данных: ${JSON.stringify({
         status: err.response?.status,
