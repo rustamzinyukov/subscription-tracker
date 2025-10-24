@@ -114,11 +114,28 @@ export default function DateModal({
     if (!confirm('Вы уверены, что хотите удалить эту подписку?')) return;
     
     try {
+      console.log('🗑️ Удаляем подписку с ID:', subscriptionId);
       await apiClient.deleteSubscription(subscriptionId);
+      console.log('✅ Подписка успешно удалена с сервера');
       onSubscriptionDelete(subscriptionId);
+      console.log('✅ Подписка удалена из локального состояния');
     } catch (err: any) {
-      console.error('Error deleting subscription:', err);
-      alert('Ошибка при удалении подписки');
+      console.error('❌ Ошибка при удалении подписки:', err);
+      let errorMessage = 'Ошибка при удалении подписки';
+      
+      if (err.response?.data?.detail) {
+        if (typeof err.response.data.detail === 'string') {
+          errorMessage = err.response.data.detail;
+        } else if (Array.isArray(err.response.data.detail)) {
+          errorMessage = err.response.data.detail.map((item: any) => item.msg || item).join(', ');
+        } else {
+          errorMessage = JSON.stringify(err.response.data.detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      alert(errorMessage);
     }
   };
 

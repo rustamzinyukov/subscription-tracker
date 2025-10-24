@@ -137,7 +137,13 @@ export default function HomePage() {
   };
 
   const handleSubscriptionDelete = (subscriptionId: number) => {
-    setSubscriptions(prev => prev.filter(sub => sub.id !== subscriptionId));
+    console.log('🗑️ Удаляем подписку из главного компонента, ID:', subscriptionId);
+    setSubscriptions(prev => {
+      const filtered = prev.filter(sub => sub.id !== subscriptionId);
+      console.log('📊 Подписок до удаления:', prev.length);
+      console.log('📊 Подписок после удаления:', filtered.length);
+      return filtered;
+    });
   };
 
   const handleSubscriptionAdd = (newSubscription: Subscription) => {
@@ -197,30 +203,21 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <StatsCard
-            title="Активных подписок"
-            value={activeSubscriptions.toString()}
-            icon="📱"
-            color="blue"
-          />
-          <StatsCard
-            title="Траты в месяц"
-            value={formatCurrency(totalMonthlySpend, 'RUB')}
-            icon="💰"
-            color="green"
-          />
-          <StatsCard
-            title="Средняя подписка"
-            value={activeSubscriptions > 0 ? formatCurrency(totalMonthlySpend / activeSubscriptions, 'RUB') : '0 ₽'}
-            icon="📊"
-            color="purple"
-          />
+        {/* Только основная статистика */}
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Общие расходы в месяц</h3>
+                <p className="text-2xl font-bold text-indigo-600">{formatCurrency(totalMonthlySpend, 'RUB')}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Активных подписок</p>
+                <p className="text-xl font-semibold text-gray-900">{activeSubscriptions}</p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Upcoming Bills */}
-        <UpcomingBills subscriptions={subscriptions} />
 
         {/* Календарь */}
         <div className="mb-8">
@@ -231,37 +228,6 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Subscriptions Section */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Все подписки</h2>
-            <AddSubscriptionButton onSubscriptionAdd={handleSubscriptionAdd} />
-          </div>
-
-          {subscriptions.length === 0 ? (
-            <div className="card text-center py-12">
-              <div className="text-6xl mb-4">📱</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                У вас пока нет подписок
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Добавьте свою первую подписку, чтобы начать отслеживать расходы
-              </p>
-              <AddSubscriptionButton onSubscriptionAdd={handleSubscriptionAdd} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {subscriptions.map((subscription) => (
-                <SubscriptionCard
-                  key={subscription.id}
-                  subscription={subscription}
-                  onUpdate={handleSubscriptionUpdate}
-                  onDelete={handleSubscriptionDelete}
-                />
-              ))}
-            </div>
-          )}
-        </div>
       </main>
       
       {/* Отображение логов */}
