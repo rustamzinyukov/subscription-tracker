@@ -26,30 +26,67 @@ def get_monthly_analytics(
     print(f"🔍 Analytics request for {year}-{month:02d} by user {current_user.id}")
     
     try:
-        # Подсчитываем подписки
+        # Рассчитываем период
+        start_date = date(year, month, 1)
+        if month == 12:
+            end_date = date(year + 1, 1, 1) - timedelta(days=1)
+        else:
+            end_date = date(year, month + 1, 1) - timedelta(days=1)
+        
+        print(f"🔍 Period: {start_date} to {end_date}")
+        
+        # Подсчитываем подписки за период
         total_subscriptions = db.query(Subscription).filter(
             and_(
                 Subscription.user_id == current_user.id,
-                Subscription.is_active == True
+                Subscription.is_active == True,
+                or_(
+                    # Recurring подписки с next_billing_date в периоде
+                    and_(
+                        Subscription.subscription_type == "recurring",
+                        Subscription.next_billing_date >= start_date,
+                        Subscription.next_billing_date <= end_date
+                    ),
+                    # One-time подписки созданные в периоде
+                    and_(
+                        Subscription.subscription_type == "one_time",
+                        func.date(Subscription.created_at) >= start_date,
+                        func.date(Subscription.created_at) <= end_date
+                    )
+                )
             )
         ).count()
         
-        print(f"🔍 Total active subscriptions: {total_subscriptions}")
+        print(f"🔍 Subscriptions in period: {total_subscriptions}")
         
-        # Простой расчет расходов
+        # Расчет расходов за период
         total_spent = 0.0
         subscriptions = db.query(Subscription).filter(
             and_(
                 Subscription.user_id == current_user.id,
-                Subscription.is_active == True
+                Subscription.is_active == True,
+                or_(
+                    # Recurring подписки с next_billing_date в периоде
+                    and_(
+                        Subscription.subscription_type == "recurring",
+                        Subscription.next_billing_date >= start_date,
+                        Subscription.next_billing_date <= end_date
+                    ),
+                    # One-time подписки созданные в периоде
+                    and_(
+                        Subscription.subscription_type == "one_time",
+                        func.date(Subscription.created_at) >= start_date,
+                        func.date(Subscription.created_at) <= end_date
+                    )
+                )
             )
         ).all()
         
         for sub in subscriptions:
-            print(f"🔍 Subscription: {sub.name} - {sub.amount} {sub.currency}")
+            print(f"🔍 Subscription: {sub.name} ({sub.subscription_type}) - {sub.amount} {sub.currency}")
             total_spent += sub.amount
         
-        print(f"🔍 Total spent: {total_spent}")
+        print(f"🔍 Total spent in period: {total_spent}")
         
         return {
             "user_id": current_user.id,
