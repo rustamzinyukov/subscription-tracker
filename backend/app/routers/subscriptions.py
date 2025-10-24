@@ -151,46 +151,19 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription with backward compatibility
-    subscription_data_dict = subscription_data.dict()
-    
-    # Ensure backward compatibility - set default values for existing fields
-    if 'next_billing_date' not in subscription_data_dict or subscription_data_dict['next_billing_date'] is None:
-        subscription_data_dict['next_billing_date'] = date.today()
-    
-    if 'frequency' not in subscription_data_dict or subscription_data_dict['frequency'] is None:
-        subscription_data_dict['frequency'] = 'monthly'
-    
-    # Calculate end_date for one_time subscriptions
-    if subscription_data_dict.get('subscription_type') == 'one_time':
-        start_date = subscription_data_dict.get('start_date')
-        duration_type = subscription_data_dict.get('duration_type')
-        duration_value = subscription_data_dict.get('duration_value')
-        
-        if start_date and duration_type and duration_type != 'indefinite' and duration_value:
-            from datetime import timedelta
-            
-            start_date_obj = start_date if isinstance(start_date, date) else start_date
-            end_date = start_date_obj
-            
-            if duration_type == 'days':
-                end_date = start_date_obj + timedelta(days=duration_value)
-            elif duration_type == 'weeks':
-                end_date = start_date_obj + timedelta(weeks=duration_value)
-            elif duration_type == 'months':
-                # Approximate month calculation
-                end_date = start_date_obj + timedelta(days=duration_value * 30)
-            elif duration_type == 'years':
-                # Approximate year calculation
-                end_date = start_date_obj + timedelta(days=duration_value * 365)
-            
-            subscription_data_dict['end_date'] = end_date
-            
-            print(f"🔍 Calculated end_date for one_time subscription: {end_date}")
-    
+    # Create subscription
     subscription = Subscription(
         user_id=current_user.id,
-        **subscription_data_dict
+        name=subscription_data.name,
+        description=subscription_data.description,
+        amount=subscription_data.amount,
+        currency=subscription_data.currency,
+        next_billing_date=subscription_data.next_billing_date,
+        frequency=subscription_data.frequency,
+        category=subscription_data.category,
+        provider=subscription_data.provider,
+        logo_url=subscription_data.logo_url,
+        website_url=subscription_data.website_url,
     )
     
     db.add(subscription)

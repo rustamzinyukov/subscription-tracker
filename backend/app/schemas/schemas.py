@@ -89,25 +89,9 @@ class SubscriptionBase(BaseModel):
     amount: float
     currency: str = "RUB"
     
-    # Тип подписки
-    subscription_type: str = "recurring"  # recurring, one_time
-    
-    # Поля для recurring подписок
-    next_billing_date: date  # Обязательное поле
-    frequency: FrequencyEnum  # Обязательное поле
-    interval_unit: Optional[str] = None  # day, week, month, year
-    interval_count: Optional[int] = 1
-    
-    # Поля для пробного периода
-    has_trial: Optional[bool] = False
-    trial_start_date: Optional[date] = None
-    trial_end_date: Optional[date] = None
-    
-    # Поля для one_time подписок
-    start_date: Optional[date] = None
-    duration_type: Optional[str] = None  # days, weeks, months, years, indefinite
-    duration_value: Optional[int] = None
-    end_date: Optional[date] = None
+    # Основные поля подписки
+    next_billing_date: date
+    frequency: FrequencyEnum
     
     # Общие поля
     category: Optional[str] = None
@@ -128,12 +112,6 @@ class SubscriptionBase(BaseModel):
             raise ValueError(f'Currency must be one of: {allowed_currencies}')
         return v
 
-    @validator('subscription_type')
-    def validate_subscription_type(cls, v):
-        allowed_types = ['recurring', 'one_time']
-        if v not in allowed_types:
-            raise ValueError(f'Subscription type must be one of: {allowed_types}')
-        return v
 
 class SubscriptionCreate(SubscriptionBase):
     pass
