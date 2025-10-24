@@ -54,23 +54,11 @@ def get_monthly_analytics(
                     Subscription.trial_start_date <= end_date,
                     Subscription.trial_end_date >= start_date
                 ),
-                # One-time подписки (учитываем по start_date или created_at)
+                # One-time подписки (учитываем все one-time подписки созданные в периоде)
                 and_(
                     Subscription.subscription_type == "one_time",
-                    or_(
-                        # Если есть start_date - используем его
-                        and_(
-                            Subscription.start_date != None,
-                            Subscription.start_date >= start_date,
-                            Subscription.start_date <= end_date
-                        ),
-                        # Если start_date отсутствует - используем created_at
-                        and_(
-                            Subscription.start_date == None,
-                            func.date(Subscription.created_at) >= start_date,
-                            func.date(Subscription.created_at) <= end_date
-                        )
-                    )
+                    func.date(Subscription.created_at) >= start_date,
+                    func.date(Subscription.created_at) <= end_date
                 )
             )
         )
