@@ -112,7 +112,10 @@ export default function AdvancedSubscriptionForm({
         const nextPaymentDate = validateDate(formData.next_payment_date, 'Дата следующего платежа');
         subscriptionData = {
           ...subscriptionData,
-          next_payment_date: nextPaymentDate.toISOString(),
+          next_billing_date: nextPaymentDate.toISOString().split('T')[0],
+          frequency: formData.interval_unit === 'day' ? 'daily' : 
+                    formData.interval_unit === 'week' ? 'weekly' :
+                    formData.interval_unit === 'month' ? 'monthly' : 'yearly',
           interval_unit: formData.interval_unit,
           interval_count: formData.interval_count,
           has_trial: hasTrial,
@@ -130,14 +133,14 @@ export default function AdvancedSubscriptionForm({
             throw new Error('Дата окончания пробного периода должна быть раньше даты первого платежа');
           }
 
-          subscriptionData.trial_start_date = trialStartDate.toISOString();
-          subscriptionData.trial_end_date = trialEndDate.toISOString();
+          subscriptionData.trial_start_date = trialStartDate.toISOString().split('T')[0];
+          subscriptionData.trial_end_date = trialEndDate.toISOString().split('T')[0];
         }
       } else {
         const startDate = validateDate(formData.start_date, 'Дата начала');
         subscriptionData = {
           ...subscriptionData,
-          start_date: startDate.toISOString(),
+          start_date: startDate.toISOString().split('T')[0],
           duration_type: formData.duration_type,
         };
 
