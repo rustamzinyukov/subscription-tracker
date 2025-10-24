@@ -112,14 +112,14 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Название * <span className="text-gray-500">(например, Netflix)</span>
+                    Название * <span className="text-red-500">(обязательно)</span>
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="input-field"
-                    placeholder="Netflix"
+                    placeholder="Netflix, Spotify, YouTube Premium..."
                     required
                   />
                 </div>
@@ -140,7 +140,7 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Сумма *
+                      Сумма * <span className="text-red-500">(обязательно)</span>
                     </label>
                     <input
                       type="number"
@@ -234,6 +234,11 @@ export default function AddSubscriptionButton({ onSubscriptionAdd }: AddSubscrip
                   />
                 </div>
 
+                <div className="text-sm text-gray-500 mb-4">
+                  <p><span className="text-red-500">*</span> - обязательные поля</p>
+                  <p>Остальные поля можно оставить пустыми</p>
+                </div>
+                
                 <div className="flex space-x-3 pt-4">
                   <button
                     type="submit"
