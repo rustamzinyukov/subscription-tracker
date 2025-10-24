@@ -53,7 +53,7 @@ class Subscription(Base):
     currency = Column(String, default="RUB", nullable=False)
     
     # Основные поля подписки
-    next_billing_date = Column(Date, nullable=False)
+    next_billing_date = Column(Date, nullable=True)  # Может быть null для one_time подписок
     frequency = Column(Enum(FrequencyEnum), nullable=False)
     
     # Поля для продвинутой формы

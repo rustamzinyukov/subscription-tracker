@@ -91,7 +91,7 @@ class SubscriptionBase(BaseModel):
     currency: str = "RUB"
     
     # Основные поля подписки
-    next_billing_date: date
+    next_billing_date: Optional[date] = None  # Может быть null для one_time подписок
     frequency: FrequencyEnum
     
     # Поля для продвинутой формы (опциональные)
