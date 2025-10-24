@@ -1,7 +1,7 @@
 # backend/app/routers/analytics.py
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, extract
+from sqlalchemy import func, and_, or_, extract
 from typing import List, Optional
 from datetime import date, datetime, timedelta
 from collections import defaultdict
@@ -35,13 +35,26 @@ def get_monthly_analytics(
     else:
         end_date = date(year, month + 1, 1) - timedelta(days=1)
     
-    # Get active subscriptions for the period
+    # Get active subscriptions for the period (including trial logic)
     subscriptions = db.query(Subscription).filter(
         and_(
             Subscription.user_id == current_user.id,
             Subscription.is_active == True,
-            Subscription.next_billing_date >= start_date,
-            Subscription.next_billing_date <= end_date
+            # Учитываем пробный период
+            or_(
+                # Обычные подписки
+                and_(
+                    Subscription.subscription_type == "recurring",
+                    Subscription.next_billing_date >= start_date,
+                    Subscription.next_billing_date <= end_date
+                ),
+                # Пробный период
+                and_(
+                    Subscription.has_trial == True,
+                    Subscription.trial_start_date <= end_date,
+                    Subscription.trial_end_date >= start_date
+                )
+            )
         )
     ).all()
     
