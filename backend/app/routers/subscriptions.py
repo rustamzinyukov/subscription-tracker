@@ -104,6 +104,10 @@ def create_subscription(
 ):
     """Create a new subscription"""
     
+    # Debug logging
+    print(f"🔍 Creating subscription for user {current_user.id}")
+    print(f"🔍 Subscription data received: {subscription_data.dict()}")
+    
     # Check free tier limit (temporarily disabled for testing)
     # if not current_user.is_premium:
     #     total_subs = db.query(Subscription).filter(Subscription.user_id == current_user.id).count()
