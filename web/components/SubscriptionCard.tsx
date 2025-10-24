@@ -142,7 +142,7 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
           ) : (
             <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
               <span className="text-primary-600 font-bold text-lg">
-                {subscription.name[0].toUpperCase()}
+                {subscription.name?.[0]?.toUpperCase() || 'S'}
               </span>
             </div>
           )}

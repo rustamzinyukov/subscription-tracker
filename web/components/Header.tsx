@@ -62,7 +62,7 @@ export default function Header({ user }: HeaderProps) {
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                   <span className="text-primary-600 font-medium text-sm">
-                    {user?.first_name?.[0] || user?.username?.[0] || 'U'}
+                    {user?.first_name?.[0] || user?.username?.[0] || user?.email?.[0] || 'U'}
                   </span>
                 </div>
                 <div className="text-sm">

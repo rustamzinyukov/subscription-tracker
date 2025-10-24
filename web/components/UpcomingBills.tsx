@@ -69,7 +69,7 @@ export default function UpcomingBills({ subscriptions }: UpcomingBillsProps) {
                       ) : (
                         <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
                           <span className="text-primary-600 font-bold text-sm">
-                            {subscription.name[0].toUpperCase()}
+                            {subscription.name?.[0]?.toUpperCase() || 'S'}
                           </span>
                         </div>
                       )}
