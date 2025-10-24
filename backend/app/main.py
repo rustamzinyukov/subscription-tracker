@@ -27,6 +27,34 @@ def run_migration():
         db_url = get_database_url()
         print(f"🔗 Database URL: {db_url[:50]}..." if len(db_url) > 50 else f"🔗 Database URL: {db_url}")
         
+        # Test database connection
+        try:
+            from sqlalchemy import create_engine, text
+            engine = create_engine(db_url)
+            with engine.connect() as conn:
+                result = conn.execute(text("SELECT 1"))
+                print("✅ Database connection test successful!")
+                
+                # Check if subscriptions table exists
+                result = conn.execute(text("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'subscriptions'"))
+                table_exists = result.scalar()
+                print(f"📊 Subscriptions table exists: {table_exists > 0}")
+                
+                if table_exists > 0:
+                    # Check current columns
+                    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'subscriptions' ORDER BY ordinal_position"))
+                    columns = [row[0] for row in result.fetchall()]
+                    print(f"📊 Current columns: {columns}")
+                    
+                    # Check if advanced columns already exist
+                    advanced_columns = ['subscription_type', 'has_trial', 'trial_start_date', 'interval_unit']
+                    existing_advanced = [col for col in advanced_columns if col in columns]
+                    print(f"📊 Advanced columns already exist: {existing_advanced}")
+                    
+        except Exception as e:
+            print(f"❌ Database connection test failed: {e}")
+            return
+        
         # Change to the root directory where alembic.ini is located
         os.chdir("/app")
         print(f"📁 Current directory: {os.getcwd()}")
