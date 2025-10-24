@@ -66,7 +66,7 @@ def get_subscriptions(
     pages = (total + size - 1) // size
     
     return PaginatedResponse(
-        items=[SubscriptionResponse.from_orm(sub) for sub in subscriptions],
+        items=[SubscriptionResponse.from_orm(sub).dict() for sub in subscriptions],
         total=total,
         page=page,
         size=size,
