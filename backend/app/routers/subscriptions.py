@@ -151,7 +151,7 @@ def create_subscription(
     #             detail="Free tier limit reached. Upgrade to premium for unlimited subscriptions."
     #         )
     
-    # Create subscription with all advanced fields
+    # Create subscription (временно без продвинутых полей)
     subscription = Subscription(
         user_id=current_user.id,
         name=subscription_data.name,
@@ -160,71 +160,13 @@ def create_subscription(
         currency=subscription_data.currency,
         next_billing_date=subscription_data.next_billing_date,
         frequency=subscription_data.frequency,
-        subscription_type=subscription_data.subscription_type,
-        interval_unit=subscription_data.interval_unit,
-        interval_count=subscription_data.interval_count,
-        has_trial=subscription_data.has_trial,
-        trial_start_date=subscription_data.trial_start_date,
-        trial_end_date=subscription_data.trial_end_date,
-        start_date=subscription_data.start_date,
-        duration_type=subscription_data.duration_type,
-        duration_value=subscription_data.duration_value,
-        end_date=subscription_data.end_date,
         category=subscription_data.category,
         provider=subscription_data.provider,
         logo_url=subscription_data.logo_url,
         website_url=subscription_data.website_url,
     )
     
-    print(f"🔍 Saving advanced fields: subscription_type={subscription_data.subscription_type}, has_trial={subscription_data.has_trial}")
-    
-    # Умная логика на основе типа подписки
-    if subscription_data.subscription_type == "one_time":
-        # Для одноразовых подписок - рассчитываем end_date
-        if subscription_data.start_date and subscription_data.duration_type and subscription_data.duration_value:
-            from datetime import timedelta
-            
-            start_date = subscription_data.start_date
-            duration_type = subscription_data.duration_type
-            duration_value = subscription_data.duration_value
-            
-            if duration_type == "days":
-                end_date = start_date + timedelta(days=duration_value)
-            elif duration_type == "weeks":
-                end_date = start_date + timedelta(weeks=duration_value)
-            elif duration_type == "months":
-                end_date = start_date + timedelta(days=duration_value * 30)
-            elif duration_type == "years":
-                end_date = start_date + timedelta(days=duration_value * 365)
-            
-            subscription.end_date = end_date
-            print(f"🔍 Calculated end_date for one_time subscription: {end_date}")
-    
-    elif subscription_data.subscription_type == "recurring":
-        # Для регулярных подписок - рассчитываем следующий платеж
-        if subscription_data.interval_unit and subscription_data.interval_count:
-            from datetime import timedelta
-            
-            current_date = subscription_data.next_billing_date
-            interval_unit = subscription_data.interval_unit
-            interval_count = subscription_data.interval_count
-            
-            if interval_unit == "day":
-                next_payment = current_date + timedelta(days=interval_count)
-            elif interval_unit == "week":
-                next_payment = current_date + timedelta(weeks=interval_count)
-            elif interval_unit == "month":
-                next_payment = current_date + timedelta(days=interval_count * 30)
-            elif interval_unit == "year":
-                next_payment = current_date + timedelta(days=interval_count * 365)
-            
-            subscription.next_billing_date = next_payment
-            print(f"🔍 Calculated next payment for recurring subscription: {next_payment}")
-    
-    # Логика для пробного периода
-    if subscription_data.has_trial and subscription_data.trial_start_date and subscription_data.trial_end_date:
-        print(f"🔍 Trial period: {subscription_data.trial_start_date} to {subscription_data.trial_end_date}")
-        # В будущем можно добавить логику для пробного периода
+    print(f"🔍 Creating basic subscription (advanced fields temporarily disabled)")
     
     db.add(subscription)
     db.commit()

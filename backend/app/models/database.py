@@ -55,17 +55,8 @@ class Subscription(Base):
     next_billing_date = Column(Date, nullable=False)
     frequency = Column(Enum(FrequencyEnum), nullable=False)
     
-    # Поля для продвинутой формы
-    subscription_type = Column(String, default="recurring", nullable=False)
-    interval_unit = Column(String, nullable=True)  # day, week, month, year
-    interval_count = Column(Integer, default=1, nullable=True)
-    has_trial = Column(Boolean, default=False, nullable=False)
-    trial_start_date = Column(Date, nullable=True)
-    trial_end_date = Column(Date, nullable=True)
-    start_date = Column(Date, nullable=True)  # Дата начала для one_time
-    duration_type = Column(String, nullable=True)  # days, weeks, months, years, indefinite
-    duration_value = Column(Integer, nullable=True)  # Количество единиц
-    end_date = Column(Date, nullable=True)  # Дата окончания (рассчитывается)
+    # Основные поля подписки (временно без продвинутых полей)
+    # TODO: Добавить продвинутые поля после миграции БД
     
     # Общие поля
     is_active = Column(Boolean, default=True, index=True)

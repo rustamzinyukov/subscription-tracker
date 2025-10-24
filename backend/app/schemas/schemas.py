@@ -93,17 +93,8 @@ class SubscriptionBase(BaseModel):
     next_billing_date: date
     frequency: FrequencyEnum
     
-    # Поля для продвинутой формы (опциональные)
-    subscription_type: Optional[str] = "recurring"
-    interval_unit: Optional[str] = None
-    interval_count: Optional[int] = 1
-    has_trial: Optional[bool] = False
-    trial_start_date: Optional[date] = None
-    trial_end_date: Optional[date] = None
-    start_date: Optional[date] = None
-    duration_type: Optional[str] = None
-    duration_value: Optional[int] = None
-    end_date: Optional[date] = None
+    # Поля для продвинутой формы (временно игнорируются)
+    # TODO: Добавить после миграции БД
     
     # Общие поля
     category: Optional[str] = None
