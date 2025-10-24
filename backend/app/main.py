@@ -26,6 +26,10 @@ def run_migration():
         os.chdir("/app")
         print(f"📁 Current directory: {os.getcwd()}")
         print(f"📁 Alembic.ini exists: {os.path.exists('alembic.ini')}")
+        print(f"📁 Files in /app: {os.listdir('/app')}")
+        print(f"📁 Alembic directory exists: {os.path.exists('alembic')}")
+        if os.path.exists('alembic'):
+            print(f"📁 Files in alembic: {os.listdir('alembic')}")
         
         alembic_cfg = Config("alembic.ini")
         print(f"📁 Alembic config loaded: {alembic_cfg}")
