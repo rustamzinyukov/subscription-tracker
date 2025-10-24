@@ -19,7 +19,7 @@ export default function SubscriptionCard({ subscription, onUpdate, onDelete }: S
     amount: subscription.amount,
     currency: subscription.currency,
     frequency: subscription.frequency,
-    next_billing_date: subscription.next_billing_date.split('T')[0], // Format for date input
+    next_billing_date: subscription.next_billing_date?.split('T')[0] || subscription.next_billing_date, // Format for date input
   });
 
   const daysUntilBilling = getDaysUntilBilling(subscription.next_billing_date);
