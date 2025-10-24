@@ -69,6 +69,14 @@ export default function HomePage() {
       addLog('✅ getSubscriptions() успешен');
       
       addLog('✅ Данные пользователя загружены успешно');
+      
+      // Debug logging for subscriptions
+      console.log('🔍 Raw subscriptions data from API:', subscriptionsData);
+      console.log('🔍 Subscriptions items:', subscriptionsData.items);
+      if (subscriptionsData.items && subscriptionsData.items.length > 0) {
+        console.log('🔍 First subscription:', subscriptionsData.items[0]);
+      }
+      
       setUser(userData);
       setSubscriptions(subscriptionsData.items || []);
     } catch (err: any) {

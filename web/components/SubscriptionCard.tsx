@@ -12,6 +12,17 @@ interface SubscriptionCardProps {
 }
 
 export default function SubscriptionCard({ subscription, onUpdate, onDelete }: SubscriptionCardProps) {
+  // Debug logging
+  console.log('🔍 SubscriptionCard received subscription:', {
+    id: subscription.id,
+    name: subscription.name,
+    amount: subscription.amount,
+    currency: subscription.currency,
+    frequency: subscription.frequency,
+    next_billing_date: subscription.next_billing_date,
+    is_active: subscription.is_active
+  });
+  
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
